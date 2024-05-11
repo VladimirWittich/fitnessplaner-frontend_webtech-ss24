@@ -1,11 +1,23 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import {defineComponent, ref} from 'vue'
 import { RouterLink } from 'vue-router'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Navbar',
-  components: { RouterLink }
+  components: { RouterLink },
+  setup() {
+    const navbarToggler = ref<HTMLElement | null>(null); // Referenz auf den Navbar-Toggler
+
+    // Funktion zum Schließen des Navbar-Togglers
+    const closeNavbar = () => {
+      if (navbarToggler.value) {
+        navbarToggler.value.click(); // Klickereignis auslösen, um den Toggler zu schließen
+      }
+    };
+
+    return { navbarToggler, closeNavbar };
+  }
 })
 </script>
 
@@ -27,23 +39,24 @@ export default defineComponent({
           aria-controls="navbarNavAltMarkup"
           aria-expanded="false"
           aria-label="Toggle navigation"
+          ref="navbarToggler"
       >
-        <span class="navbar-toggler-icon"></span>
+      <span class="navbar-toggler-icon"></span>
       </button>
 
       <!-- Navbar-Inhalte -->
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <!-- Links-Inhalte -->
-          <router-link class="nav-link" to="/">Home</router-link>
-          <router-link class="nav-link" to="/about">About</router-link>
-          <router-link class="nav-link" to="/workoutplan">WorkoutPlan</router-link>
+          <router-link class="nav-link" to="/" @click="closeNavbar()">Home</router-link>
+          <router-link class="nav-link" to="/about" @click="closeNavbar()">About</router-link>
+          <router-link class="nav-link" to="/workoutplan" @click="closeNavbar()">WorkoutPlan</router-link>
 
           <!-- Flex-Grow, um Raum zu schaffen -->
           <div class="flex-spacer"></div> <!-- Füllt den Raum aus, bewegt Profile nach rechts -->
 
           <!-- Profile-Link rechts -->
-          <router-link class="nav-link" to="/myprofile">MyProfile</router-link>
+          <router-link class="nav-link" to="/myprofile" @click="closeNavbar()">MyProfile</router-link>
         </div>
       </div>
     </div>
