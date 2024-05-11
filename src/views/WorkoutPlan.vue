@@ -9,8 +9,7 @@ const exercise = ref([
 
 ]);
 
-let newExercise: Ref<Exercise> = ref({});
-
+let newExercise: Ref<Exercise> = ref({ name: 'Type in exercise name', sets: 0 , repetitions: 0});
 
 function addNewExercise() {
   exercise.value.push(newExercise.value);
