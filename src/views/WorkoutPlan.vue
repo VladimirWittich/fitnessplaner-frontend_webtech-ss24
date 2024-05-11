@@ -5,16 +5,14 @@ import { type Ref, ref } from 'vue';
 import type {Exercise} from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
-const exercise = ref([
+const exercise = ref<Exercise[]>([]);
 
-]);
 
-let newExercise: Ref<Exercise> = ref({ name: 'Type in exercise name', sets: 0 , repetitions: 0});
+let newExercise: Ref<Exercise> = ref({ name: '', sets: 0, repetitions: 0 });
 
 function addNewExercise() {
   exercise.value.push(newExercise.value);
 }
-
 function deleteExercise(index: number) {
   exercise.value.splice(index, 1);
 }
