@@ -22,7 +22,7 @@ function addNewExcercise() {
 <template>
   <!-- Vertikale Anordnung -->
   <div>
-    <h1 class="profile-welcome">Welcome to your Workout Plan Vladimir</h1>
+    <h1 class="profile-welcome">Welcome to your workout plan Vladimir</h1>
   </div>
   <!-- Vertikale Anordnung der Inhalte -->
   <div class="exercise-list-container">
@@ -42,28 +42,21 @@ function addNewExcercise() {
 </template>
 
 <style scoped>
+@media (max-width: 767px) {
+  .exercise-list-container {
+    margin-top: 80px;
+  }
 
+  .new-exercise-form {
+    margin-top: 80px;
+  }
 
-.exercise-list-container {
-  display: flex;
-  flex-direction: column; /* Vertikale Anordnung */
-  align-items: flex-start; /* Links ausgerichtet */
-}
-
-.new-exercise-form {
-  display: flex;
-  flex-direction: column; /* Vertikale Anordnung */
-  align-items: flex-start; /* Links ausgerichtet */
+  .profile-welcome {
+    margin-top: 80px;
+  }
 }
 
 input, button {
   margin-bottom: 10px; /* Platz zwischen Elementen */
-}
-
-.profile-welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-top: 200px;
 }
 </style>

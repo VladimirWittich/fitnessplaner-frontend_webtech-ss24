@@ -9,11 +9,8 @@
 </template>
 
 <style>
-@media (min-width: 1024px) {
+@media (max-width: 767px) {
   .myprofile {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 200px;
+    margin-top: 80px;
   }}
 </style>
