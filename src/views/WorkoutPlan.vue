@@ -9,7 +9,7 @@ const exercise = ref([
 
 ]);
 
-let newExercise: Ref<Exercise> = ref({ name: '', sets: '' , repetitions: ''});
+let newExercise: Ref<Exercise> = ref({ name: '', sets: 0, repetitions: 0 });
 
 
 function addNewExercise() {
@@ -19,6 +19,7 @@ function addNewExercise() {
 function deleteExercise(index: number) {
   exercise.value.splice(index, 1);
 }
+
 
 
 </script>
@@ -35,7 +36,7 @@ function deleteExercise(index: number) {
   <!-- Vertikale Anordnung der Inhalte -->
   <div class="exercise-list-container">
     <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
-    <button v-if="exercise.length > 0" @click="deleteExercise()">Delete Exercise</button>
+    <button v-if="exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
 
     <div class="new-exercise-form">
       <label>Exercise Name</label>
