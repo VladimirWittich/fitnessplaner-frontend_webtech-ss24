@@ -9,7 +9,7 @@ const exercise = ref([
 
 ]);
 
-let newExercise: Ref<Exercise[]> = ref([]);
+let newExercise: Ref<Exercise> = ref({});
 
 
 function addNewExercise() {
