@@ -2,6 +2,7 @@
 import {defineComponent, ref} from 'vue'
 import { RouterLink } from 'vue-router'
 
+
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Navbar',
@@ -24,11 +25,10 @@ export default defineComponent({
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <!-- Logo in der Navbar -->
-      <a class="navbar-brand" href="#">
+      <!-- Logo in der Navbar als Router-Link zur Startseite -->
+      <router-link to="/" class="navbar-brand">
         <img class="navbar-logo" src="@/assets/logo.png" alt="FitnessPlaner Logo" />
-
-      </a>
+      </router-link>
 
       <!-- Toggler für kleine Bildschirme -->
       <button
@@ -41,7 +41,7 @@ export default defineComponent({
           aria-label="Toggle navigation"
           ref="navbarToggler"
       >
-      <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon"></span>
       </button>
 
       <!-- Navbar-Inhalte -->
@@ -63,15 +63,15 @@ export default defineComponent({
   </nav>
 </template>
 
+
 <style scoped>
-.navbar-logo {
-  height: 70px; /* Anpassbare Höhe für das Logo */
+.navbar .navbar-brand .navbar-logo {
+  height: 30px; /* Anpassung der Höhe des Logos */
   margin-right: 0px; /* Platz zwischen Logo und Text */
 }
-</style>
 
 
-<style scoped>
+
 .navbar {
   position: fixed;
   top: 0;
@@ -92,7 +92,4 @@ export default defineComponent({
   flex-grow: 1; /* Füllt den Raum, sodass "Profile" nach rechts verschoben wird */
 }
 
-.navbar-logo {
-  height: 70px; /* Logo-Höhe */
-}
 </style>

@@ -1,4 +1,6 @@
-export type Excercise = {
+export type Exercise = {
     name: string,
-    sets: number
+    sets: number,
+    repetitions: number
+
 }

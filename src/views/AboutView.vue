@@ -5,11 +5,11 @@
 </template>
 
 <style>
-@media (max-width: 767px) {
+
   .about {
     margin-top: 80px;
   }
-}
+
 </style>
 <script setup lang="ts">
 </script>

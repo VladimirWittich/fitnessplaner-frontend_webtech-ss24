@@ -2,58 +2,81 @@
 
 
 import { type Ref, ref } from 'vue';
-import type {Excercise} from "@/model/model";
-import ExcerciseListComponent from "@/components/ExcerciseListComponent.vue";
+import type {Exercise} from "@/model/model";
+import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
-const excercise = ref([
-  { name: 'Bench Press', sets: 5 },
-  { name: 'Bench Press Incline', sets: 4},
-  { name: 'Shoulder Press', sets: 0 },
+const exercise = ref([
+
 ]);
 
-let newExcercise: Ref<Excercise> = ref({ name: 'type in excercise', sets: 0 });
+let newExercise: Ref<Exercise> = ref({ name: '', sets: '' , repetitions: ''});
 
 
-function addNewExcercise() {
-  excercise.value.push(newExcercise.value);
+function addNewExercise() {
+  exercise.value.push(newExercise.value);
 }
+
+function deleteExercise(index: number) {
+  exercise.value.splice(index, 1);
+}
+
+
 </script>
 
 <template>
   <!-- Vertikale Anordnung -->
   <div>
-    <h1 class="profile-welcome">Welcome to your workout plan Vladimir</h1>
+    <h4 class="profile-welcome">You can do it Vladimir!</h4>
   </div>
+  <div>
+    <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
+  </div>
+
   <!-- Vertikale Anordnung der Inhalte -->
   <div class="exercise-list-container">
-    <ExcerciseListComponent v-model="excercise"></ExcerciseListComponent>
+    <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
+    <button v-if="exercise.length > 0" @click="deleteExercise()">Delete Exercise</button>
 
     <div class="new-exercise-form">
       <label>Exercise Name</label>
-      <input type="text" v-model="newExcercise.name">
+      <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
-      <label>Exercise Sets</label>
-      <input type="number" v-model="newExcercise.sets">
+      <label>Sets</label>
+      <input type="number" v-model="newExercise.sets" placeholder="0">
 
-      <button @click="addNewExcercise()">Add Exercise</button>
+      <label>Repetitions</label>
+      <input type="number" v-model="newExercise.repetitions" placeholder="12-10-8">
+
+      <button @click="addNewExercise()">Add Exercise</button>
 
     </div>
   </div>
 </template>
 
 <style scoped>
-@media (max-width: 767px) {
-  .exercise-list-container {
-    margin-top: 80px;
-  }
+.exercise-list-container {
+  margin-top: 20px;
+}
 
-  .new-exercise-form {
-    margin-top: 80px;
-  }
+.new-exercise-form {
+  display: flex;
+  flex-wrap: wrap; /* Elemente können bei Bedarf umgebrochen werden */
+  margin-top: 50px;
+}
 
-  .profile-welcome {
-    margin-top: 80px;
-  }
+.new-exercise-form label,
+.new-exercise-form input {
+  width: calc(50% - 10px); /* Breite für jedes Element */
+  margin-bottom: 5px; /* Abstand zwischen den Elementen */
+}
+
+.new-exercise-form label {
+  margin-right: 0px; /* Abstand zwischen den Labels */
+}
+
+.profile-welcome {
+  margin-top: 80px;
+  text-align: left;
 }
 
 input, button {

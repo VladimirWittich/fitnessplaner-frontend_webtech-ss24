@@ -9,8 +9,9 @@
 </template>
 
 <style>
-@media (max-width: 767px) {
+
   .myprofile {
     margin-top: 80px;
-  }}
+    text-align: left;
+  }
 </style>

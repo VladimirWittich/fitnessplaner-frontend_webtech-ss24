@@ -12,9 +12,9 @@ const name_first = 'Vladimir';
 </template>
 
 <style scoped>
-@media (max-width: 767px) {
+
   .greeting {
     margin-top: 80px;
-  }}
+  }
 
 </style>

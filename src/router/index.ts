@@ -29,6 +29,7 @@ const router = createRouter({
       component: WorkoutPlan
     }
   ]
+
 })
 
 export default router
