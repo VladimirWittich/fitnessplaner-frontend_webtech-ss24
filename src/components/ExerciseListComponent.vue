@@ -1,33 +1,81 @@
-<script setup lang="ts">
-import type {Exercise} from "@/model/model";
-
-const model = defineModel<Exercise[]>()
-</script>
-
 <template>
   <div class="exercise-list-container">
-    <div class="exercise-item" v-for="exercise in model" :key="exercise.name">
-      <div class="exercise-row">
-        <div class="exercise-label">Exercise:</div>
-        <div class="exercise-value">{{ exercise.name }}</div>
-      </div>
+    <!-- Container wird nur angezeigt, wenn mindestens eine Übung vorhanden ist -->
+    <div v-if="model.length > 0" class="container bg-light-gray p-4">
+      <div class="exercise-item" v-for="(exercise, index) in model" :key="index">
+        <div class="exercise-row">
+          <div class="exercise-label">Exercise:</div>
+          <div class="exercise-value">{{ exercise.name }}</div>
+        </div>
 
-      <div class="exercise-row">
-        <div class="exercise-label">Sets:</div>
-        <div class="exercise-value">{{ exercise.sets }}</div>
-      </div>
+        <div class="exercise-row">
+          <div class="exercise-label">Sets:</div>
+          <div class="exercise-value">
+            <input type="number" v-model="exercise.sets" @change="onSetsChange(index, exercise.sets)">
+          </div>
+        </div>
 
-      <div class="exercise-row">
-        <div class="exercise-label">Repetitions:</div>
-        <div class="exercise-value">{{ exercise.repetitions }}</div>
+        <!-- Dynamisch generierte Felder für Repetitions und Gewicht -->
+        <template v-if="exercise.sets && exercise.repetitions">
+          <template v-for="(repetition, repetitionIndex) in exercise.repetitions" :key="repetitionIndex">
+            <div class="exercise-row">
+              <div class="exercise-label">Repetitions {{ repetitionIndex + 1 }}:</div>
+              <div class="exercise-value">
+                <input type="number" v-model="exercise.repetitions[repetitionIndex]" @input="updateTotalWeight()">
+              </div>
+              <div class="exercise-label">Weight:</div>
+              <div class="exercise-value">
+                <input type="number" v-model="exercise.weight[repetitionIndex]" @input="updateTotalWeight()">
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <div class="exercise-row">
+          <div class="exercise-label">Total weight:</div>
+          <div class="exercise-value">{{ calculateTotalWeight(exercise) }}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
+<script setup lang="ts">
+import { defineModel } from 'vue'
+import type { Exercise } from "@/model/model";
+
+const model = defineModel<Exercise[]>()
+
+const generateRepetitionsArray = (sets: number) => {
+  return new Array(sets).fill(0); // Erzeugt ein Array mit der Länge von "sets" und füllt es mit Nullen
+}
+
+const onSetsChange = (index: number, newSets: number) => {
+  model[index].repetitions = generateRepetitionsArray(newSets);
+}
+
+const updateTotalWeight = () => {
+  model.value.forEach((exercise) => {
+    exercise.totalweight = calculateTotalWeight(exercise);
+  });
+};
+
+const calculateTotalWeight = (exercise: Exercise) => {
+  let totalWeight = 0;
+  for (let i = 0; i < exercise.repetitions.length; i++) {
+    totalWeight += (exercise.repetitions[i] || 0) * (exercise.weight[i] || 0);
+  }
+  return totalWeight;
+};
+</script>
+
 <style scoped>
 .exercise-list-container {
   margin-top: 20px;
+}
+
+.bg-light-gray {
+  background-color: #f8f9fa; /* Hintergrundfarbe grau */
 }
 
 .exercise-item {

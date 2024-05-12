@@ -1,55 +1,91 @@
+<template>
+  <!-- Vertikale Anordnung -->
+  <div class="container">
+    <h4 class="profile-welcome">You can do it Vladimir!</h4>
+    <div>
+      <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
+    </div>
+
+    <!-- Vertikale Anordnung der Inhalte -->
+    <div class="exercise-list-container">
+      <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
+      <button class="btn btn-primary" v-if="exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
+
+      <div class="new-exercise-form">
+        <div class="container bg-light-gray p-4">
+          <label>Exercise Name</label>
+          <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
+
+          <label>Sets</label>
+          <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)">
+
+          <!-- Dynamisch generierte Repetitions-Felder -->
+          <template v-if="displayRepetitionsInput">
+            <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
+              <label>Repetitions {{ index + 1 }}</label>
+              <input type="number" v-model="newExercise.repetitions[index]">
+            </div>
+          </template>
+
+          <!-- Gewichtsfelder -->
+          <template v-if="displayWeightInput">
+            <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
+              <label>Weight {{ index + 1 }}</label>
+              <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
+            </div>
+          </template>
+        </div>
+
+        <button class="btn btn-primary" @click="addNewExercise()">Add Exercise</button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
-
-
-import { type Ref, ref } from 'vue';
-import type {Exercise} from "@/model/model";
+import { ref } from 'vue';
+import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
 const exercise = ref<Exercise[]>([]);
 
-
-let newExercise: Ref<Exercise> = ref({ name: '', sets: 0, repetitions: 0 });
-
-function addNewExercise() {
-  exercise.value.push(newExercise.value);
-}
 function deleteExercise(index: number) {
   exercise.value.splice(index, 1);
 }
 
+const newExercise: Exercise = {
+  name: '',
+  sets: 0,
+  repetitions: [],
+  weight: [],
+  totalweight: 0
+};
 
+const updateRepetitions = (value: number) => {
+  newExercise.repetitions = new Array(value).fill(0);
+};
 
+// Flag, um zu überprüfen, ob das Repetitions-Eingabefeld angezeigt werden soll
+const displayRepetitionsInput = ref(false);
+
+// Flag, um zu überprüfen, ob das Gewichts-Eingabefeld angezeigt werden soll
+const displayWeightInput = ref(false);
+
+const addNewExercise = () => {
+  exercise.value.push({ ...newExercise });
+  // Reset des neuen Exercise-Objekts für die nächste Eingabe
+  newExercise.name = '';
+  newExercise.sets = 0;
+  newExercise.repetitions = [];
+  newExercise.weight = [];
+  newExercise.totalweight = 0;
+};
+
+const updateTotalWeight = () => {
+  // Berechnung des Totalgewichts
+  newExercise.totalweight = newExercise.weight.reduce((acc, val) => acc + parseFloat(val || 0), 0);
+};
 </script>
-
-<template>
-  <!-- Vertikale Anordnung -->
-  <div>
-    <h4 class="profile-welcome">You can do it Vladimir!</h4>
-  </div>
-  <div>
-    <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
-  </div>
-
-  <!-- Vertikale Anordnung der Inhalte -->
-  <div class="exercise-list-container">
-    <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
-    <button v-if="exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
-
-    <div class="new-exercise-form">
-      <label>Exercise Name</label>
-      <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
-
-      <label>Sets</label>
-      <input type="number" v-model="newExercise.sets" placeholder="0">
-
-      <label>Repetitions</label>
-      <input type="number" v-model="newExercise.repetitions" placeholder="12-10-8">
-
-      <button @click="addNewExercise()">Add Exercise</button>
-
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .exercise-list-container {
@@ -80,4 +116,9 @@ function deleteExercise(index: number) {
 input, button {
   margin-bottom: 10px; /* Platz zwischen Elementen */
 }
+
+.bg-light-gray {
+  background-color: #f8f9fa; /* Hintergrundfarbe grau */
+}
+
 </style>
