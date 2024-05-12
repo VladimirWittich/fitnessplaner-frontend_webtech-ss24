@@ -1,7 +1,7 @@
 <template>
   <div class="exercise-list-container">
     <!-- Container wird nur angezeigt, wenn mindestens eine Übung vorhanden ist -->
-    <div v-if="model.length > 0" class="container bg-light-gray p-4">
+    <div v-if="model && model.length > 0" class="container bg-light-gray p-4">
       <div class="exercise-item" v-for="(exercise, index) in model" :key="index">
         <div class="exercise-row">
           <div class="exercise-label">Exercise:</div>
@@ -44,20 +44,24 @@
 import { defineModel } from 'vue'
 import type { Exercise } from "@/model/model";
 
-const model = defineModel<Exercise[]>()
+const model = defineModel<Exercise[] | undefined>()
 
 const generateRepetitionsArray = (sets: number) => {
   return new Array(sets).fill(0); // Erzeugt ein Array mit der Länge von "sets" und füllt es mit Nullen
 }
 
 const onSetsChange = (index: number, newSets: number) => {
-  model[index].repetitions = generateRepetitionsArray(newSets);
+  if (model.value) {
+    model.value[index].repetitions = generateRepetitionsArray(newSets);
+  }
 }
 
 const updateTotalWeight = () => {
-  model.value.forEach((exercise) => {
-    exercise.totalweight = calculateTotalWeight(exercise);
-  });
+  if (model.value) {
+    model.value.forEach((exercise) => {
+      exercise.totalweight = calculateTotalWeight(exercise);
+    });
+  }
 };
 
 const calculateTotalWeight = (exercise: Exercise) => {

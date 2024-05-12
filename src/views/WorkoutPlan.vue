@@ -9,7 +9,7 @@
     <!-- Vertikale Anordnung der Inhalte -->
     <div class="exercise-list-container">
       <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
-      <button class="btn btn-primary" v-if="exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
+      <button class="btn btn-primary" v-if="exercise && exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
 
       <div class="new-exercise-form">
         <div class="container bg-light-gray p-4">
@@ -47,10 +47,12 @@ import { ref } from 'vue';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
-const exercise = ref<Exercise[]>([]);
+const exercise = ref<Exercise[] | undefined>([]);
 
 function deleteExercise(index: number) {
-  exercise.value.splice(index, 1);
+  if (exercise.value) {
+    exercise.value.splice(index, 1);
+  }
 }
 
 const newExercise: Exercise = {
@@ -72,7 +74,9 @@ const displayRepetitionsInput = ref(false);
 const displayWeightInput = ref(false);
 
 const addNewExercise = () => {
-  exercise.value.push({ ...newExercise });
+  if (exercise.value) {
+    exercise.value.push({ ...newExercise });
+  }
   // Reset des neuen Exercise-Objekts für die nächste Eingabe
   newExercise.name = '';
   newExercise.sets = 0;
@@ -82,8 +86,19 @@ const addNewExercise = () => {
 };
 
 const updateTotalWeight = () => {
-  // Berechnung des Totalgewichts
-  newExercise.totalweight = newExercise.weight.reduce((acc, val) => acc + parseFloat(val || 0), 0);
+  if (exercise.value) {
+    exercise.value.forEach((exercise) => {
+      exercise.totalweight = calculateTotalWeight(exercise);
+    });
+  }
+};
+
+const calculateTotalWeight = (exercise: Exercise) => {
+  let totalWeight = 0;
+  for (let i = 0; i < exercise.repetitions.length; i++) {
+    totalWeight += (exercise.repetitions[i] || 0) * (exercise.weight[i] || 0);
+  }
+  return totalWeight;
 };
 </script>
 
