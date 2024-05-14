@@ -99,7 +99,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-axios.get('http://localhost:8080/workoutplan')
+axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com')
     .then(function (response) {
       const data = response.data;
       if (data && data.length > 0) {
@@ -116,24 +116,27 @@ axios.get('http://localhost:8080/workoutplan')
 </script>
 
 <style scoped>
-.exercise-list-container {
-  margin-top: 20px;
+.container,
+.exercise-list-container,
+.new-exercise-form {
+  text-align: left; /* Alle Container linksbündig ausrichten */
 }
 
-.new-exercise-form {
-  display: flex;
-  flex-wrap: wrap; /* Elemente können bei Bedarf umgebrochen werden */
-  margin-top: 50px;
+/* Du kannst die folgenden Regeln entfernen, da sie nicht mehr benötigt werden */
+.new-exercise-form input[type="text"],
+.new-exercise-form input[type="number"] {
+  width: 80%;
+  margin-bottom: 10px;
 }
 
 .new-exercise-form label,
 .new-exercise-form input {
-  width: calc(50% - 10px); /* Breite für jedes Element */
-  margin-bottom: 5px; /* Abstand zwischen den Elementen */
+  width: calc(50% - 10px);
+  margin-bottom: 5px;
 }
 
 .new-exercise-form label {
-  margin-right: 0px; /* Abstand zwischen den Labels */
+  margin-right: 0px;
 }
 
 .profile-welcome {
@@ -141,12 +144,13 @@ axios.get('http://localhost:8080/workoutplan')
   text-align: left;
 }
 
-input, button {
-  margin-bottom: 10px; /* Platz zwischen Elementen */
+input,
+button {
+  margin-bottom: 10px;
 }
 
 .bg-light-gray {
-  background-color: #f8f9fa; /* Hintergrundfarbe grau */
+  background-color: #f8f9fa;
 }
-
 </style>
+

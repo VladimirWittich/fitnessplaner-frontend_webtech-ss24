@@ -9,11 +9,12 @@
         </div>
 
         <div class="exercise-row">
-          <div class="exercise-label">Sets:</div>
+          <div class="exercise-label exercise-label-sets">Sets:</div>
           <div class="exercise-value">
             <input type="number" v-model="exercise.sets" @change="onSetsChange(index, exercise.sets)">
           </div>
         </div>
+
 
         <!-- Dynamisch generierte Felder für Repetitions und Gewicht -->
         <template v-if="exercise.sets && exercise.repetitions">
@@ -73,7 +74,6 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-
 </script>
 
 <style scoped>
@@ -89,18 +89,32 @@ const calculateTotalWeight = (exercise: Exercise) => {
   margin-bottom: 10px;
 }
 
+.exercise-value input[type="number"] {
+  width: 80%;
+  margin-bottom: 10px; /* Fügt einen zusätzlichen Abstand zwischen dem Label und dem Eingabefeld hinzu */
+}
+
 .exercise-row {
   display: flex;
   margin-bottom: 5px;
 }
 
-.exercise-label {
-  width: 120px; /* Breite des Labels */
+.exercise-value {
+  flex: 1; /* Verteilt den verfügbaren Platz zwischen dem Label und dem Eingabefeld */
 }
 
+.exercise-label {
+  min-width: 120px; /* Mindestbreite des Labels */
+}
+
+/* Für kleinere Bildschirme */
 @media (max-width: 767px) {
   .exercise-label {
-    width: 100px; /* Breite auf auto setzen, um Platz für den Text zuzulassen */
+    min-width: auto; /* Mindestbreite auf auto setzen, um Platz für den Text zuzulassen */
+  }
+  .exercise-value input[type="number"] {
+    width: 100%; /* Die Breite des Eingabefelds auf 100% setzen, um den verfügbaren Platz auszufüllen */
   }
 }
+
 </style>
