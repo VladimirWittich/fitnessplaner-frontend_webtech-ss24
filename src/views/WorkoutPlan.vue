@@ -13,10 +13,10 @@
 
       <div class="new-exercise-form">
         <div class="container bg-light-gray p-4">
-          <label>Exercise Name</label>
+          <label>Exercise name:</label>
           <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
-          <label>Sets</label>
+          <label>Sets:</label>
           <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)">
 
           <!-- Dynamisch generierte Repetitions-Felder -->
@@ -44,10 +44,18 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
 const exercise = ref<Exercise[] | undefined>([]);
+const newExercise = ref<Exercise>({
+  name: '',
+  sets: 0,
+  repetitions: [],
+  weight: [],
+  totalweight: 0
+});
 
 function deleteExercise(index: number) {
   if (exercise.value) {
@@ -55,34 +63,24 @@ function deleteExercise(index: number) {
   }
 }
 
-const newExercise: Exercise = {
-  name: '',
-  sets: 0,
-  repetitions: [],
-  weight: [],
-  totalweight: 0
-};
-
 const updateRepetitions = (value: number) => {
-  newExercise.repetitions = new Array(value).fill(0);
+  newExercise.value.repetitions = new Array(value).fill(0);
 };
 
-// Flag, um zu überprüfen, ob das Repetitions-Eingabefeld angezeigt werden soll
 const displayRepetitionsInput = ref(false);
-
-// Flag, um zu überprüfen, ob das Gewichts-Eingabefeld angezeigt werden soll
 const displayWeightInput = ref(false);
 
 const addNewExercise = () => {
-  if (exercise.value) {
-    exercise.value.push({ ...newExercise });
+  if (newExercise.value.name && newExercise.value.sets > 0) {
+    exercise.value.push({ ...newExercise.value });
+    newExercise.value = {
+      name: '',
+      sets: 0,
+      repetitions: [],
+      weight: [],
+      totalweight: 0
+    };
   }
-  // Reset des neuen Exercise-Objekts für die nächste Eingabe
-  newExercise.name = '';
-  newExercise.sets = 0;
-  newExercise.repetitions = [];
-  newExercise.weight = [];
-  newExercise.totalweight = 0;
 };
 
 const updateTotalWeight = () => {
@@ -100,6 +98,21 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
+
+axios.get('http://localhost:8080/workoutplan')
+    .then(function (response) {
+      const data = response.data;
+      if (data && data.length > 0) {
+        const firstExercise = data[0];
+        newExercise.value.name = firstExercise.name;
+        newExercise.value.sets = firstExercise.sets;
+        newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
+        newExercise.value.weight = new Array(firstExercise.sets).fill(0);
+      }
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
 </script>
 
 <style scoped>

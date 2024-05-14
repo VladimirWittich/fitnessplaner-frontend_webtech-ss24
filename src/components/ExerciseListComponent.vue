@@ -4,7 +4,7 @@
     <div v-if="model && model.length > 0" class="container bg-light-gray p-4">
       <div class="exercise-item" v-for="(exercise, index) in model" :key="index">
         <div class="exercise-row">
-          <div class="exercise-label">Exercise:</div>
+          <div class="exercise-label">Exercise name:</div>
           <div class="exercise-value">{{ exercise.name }}</div>
         </div>
 
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { defineModel } from 'vue'
 import type { Exercise } from "@/model/model";
+import axios from "axios";
 
 const model = defineModel<Exercise[] | undefined>()
 
@@ -71,6 +72,8 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
+
+
 </script>
 
 <style scoped>
