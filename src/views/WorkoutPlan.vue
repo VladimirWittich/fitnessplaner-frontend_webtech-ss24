@@ -48,7 +48,7 @@ import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
-const exercise = ref<Exercise[] | undefined>([]);
+const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
   name: '',
   sets: 0,
@@ -72,7 +72,7 @@ const displayWeightInput = ref(false);
 
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
-    exercise.value.push({ ...newExercise.value });
+    exercise.value.push(newExercise.value);
     newExercise.value = {
       name: '',
       sets: 0,
