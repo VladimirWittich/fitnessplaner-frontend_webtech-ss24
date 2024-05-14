@@ -99,7 +99,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com')
+axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
     .then(function (response) {
       const data = response.data;
       if (data && data.length > 0) {
