@@ -102,9 +102,9 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 function fetchData() {
   const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
-  fetch(endpoint)
-      .then(response => response.json())
-      .then(data => {
+  axios.get(endpoint)
+      .then(response => {
+        const data = response.data;
         if (data && data.length > 0) {
           const firstExercise = data[0];
           newExercise.value.name = firstExercise.name;
