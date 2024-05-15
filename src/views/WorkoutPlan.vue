@@ -1,4 +1,3 @@
-
 <template>
   <!-- Vertikale Anordnung -->
   <div class="container">
@@ -49,6 +48,7 @@ import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
+// Refs für Übungen und neue Übung erstellen
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
   name: '',
@@ -58,19 +58,23 @@ const newExercise = ref<Exercise>({
   totalweight: 0
 });
 
+// Funktion zum Löschen einer Übung
 function deleteExercise(index: number) {
   if (exercise.value) {
     exercise.value.splice(index, 1);
   }
 }
 
+// Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
   newExercise.value.repetitions = new Array(value).fill(0);
 };
 
+// Variablen für die Anzeige der Eingabefelder initialisieren
 const displayRepetitionsInput = ref(false);
 const displayWeightInput = ref(false);
 
+// Funktion zum Hinzufügen einer neuen Übung
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
     exercise.value.push(newExercise.value);
@@ -84,6 +88,7 @@ const addNewExercise = () => {
   }
 };
 
+// Funktion zum Aktualisieren des Gesamtgewichts
 const updateTotalWeight = () => {
   if (exercise.value) {
     exercise.value.forEach((exercise) => {
@@ -92,6 +97,7 @@ const updateTotalWeight = () => {
   }
 };
 
+// Funktion zur Berechnung des Gesamtgewichts
 const calculateTotalWeight = (exercise: Exercise) => {
   let totalWeight = 0;
   for (let i = 0; i < exercise.repetitions.length; i++) {
@@ -100,13 +106,15 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-function fetchData() {
-  const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
+// Funktion zum Abrufen von Daten von der Backend-API
+const fetchData = () => {
+  const endpoint = process.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
   axios.get(endpoint)
       .then(response => {
         const data = response.data;
         if (data && data.length > 0) {
           const firstExercise = data[0];
+          // Erste Übung aus den erhaltenen Daten setzen
           newExercise.value.name = firstExercise.name;
           newExercise.value.sets = firstExercise.sets;
           newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
@@ -114,20 +122,14 @@ function fetchData() {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.error('Error fetching data:', error);
       });
-}
+};
 
-// Initialisierung der Daten beim Laden der Komponente
+// Daten beim Laden der Komponente abrufen
 onMounted(() => {
   fetchData();
 });
-
-// Initialisierung der Daten beim Laden der Seite
-window.addEventListener('load', () => {
-  fetchData();
-});
-
 </script>
 
 
