@@ -44,12 +44,22 @@
 <script setup lang="ts">
 import { defineModel } from 'vue'
 import type { Exercise } from "@/model/model";
-import axios from "axios";
+import axios from 'axios';
 
 const model = defineModel<Exercise[] | undefined>()
 
 const generateRepetitionsArray = (sets: number) => {
   return new Array(sets).fill(0); // Erzeugt ein Array mit der Länge von "sets" und füllt es mit Nullen
+}
+
+const fetchData = () => {
+  axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
+      .then(response => {
+        model.value = response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
 }
 
 const onSetsChange = (index: number, newSets: number) => {
@@ -73,6 +83,8 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
+
+fetchData(); // Daten beim Laden der Komponente abrufen
 
 </script>
 
