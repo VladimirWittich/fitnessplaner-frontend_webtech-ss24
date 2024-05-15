@@ -106,16 +106,10 @@ onMounted(async () => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    const data = await response.json();
-    if (data && data.length > 0) {
-      const firstExercise = data[0];
-      newExercise.value.name = firstExercise.name;
-      newExercise.value.sets = firstExercise.sets;
-      newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
-      newExercise.value.weight = new Array(firstExercise.sets).fill(0);
-    }
+    const result = await response.json();
+    exercise.value.push(...result);
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('error', error);
   }
 });
 </script>
