@@ -49,9 +49,6 @@ import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 
-// Definition der Umgebungsvariablen
-const baseUrl = import.meta.env.VUE_APP_BACKEND_BASE_URL;
-
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
   name: '',
@@ -103,9 +100,9 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-// Funktion zum Abrufen von Daten
-function fetchData() {
-  axios.get(`${baseUrl}/workoutplan`)
+
+
+  axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
       .then(function (response) {
         const data = response.data;
         if (data && data.length > 0) {
@@ -118,8 +115,30 @@ function fetchData() {
       })
       .catch(function (error) {
         console.error(error);
+      })
+      .finally(function () {
+        // Hier kannst du Operationen ausführen, die immer ausgeführt werden sollen, z. B. das Ausblenden eines Ladeindikators
+      });
+
+
+function fetchData() {
+  const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
+  fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const firstExercise = data[0];
+          newExercise.value.name = firstExercise.name;
+          newExercise.value.sets = firstExercise.sets;
+          newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
+          newExercise.value.weight = new Array(firstExercise.sets).fill(0);
+        }
+      })
+      .catch(error => {
+        console.error(error);
       });
 }
+
 
 // Initialisierung der Daten beim Laden der Komponente
 onMounted(() => {
@@ -130,6 +149,7 @@ onMounted(() => {
 window.addEventListener('load', () => {
   fetchData();
 });
+
 
 </script>
 
