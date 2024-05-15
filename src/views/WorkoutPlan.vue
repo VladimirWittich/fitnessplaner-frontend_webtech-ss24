@@ -114,7 +114,6 @@ const fetchData = () => {
         const data = response.data;
         if (data && data.length > 0) {
           const firstExercise = data[0];
-          // Erste Übung aus den erhaltenen Daten setzen
           newExercise.value.name = firstExercise.name;
           newExercise.value.sets = firstExercise.sets;
           newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
