@@ -106,24 +106,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-// Funktion zum Abrufen von Daten von der Backend-API
-const fetchData = () => {
-  const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
-  axios.get(endpoint)
-      .then(response => {
-        const data = response.data;
-        if (data && data.length > 0) {
-          const firstExercise = data[0];
-          newExercise.value.name = firstExercise.name;
-          newExercise.value.sets = firstExercise.sets;
-          newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
-          newExercise.value.weight = new Array(firstExercise.sets).fill(0);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-};
+
 
 axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
     .then(function (response) {
