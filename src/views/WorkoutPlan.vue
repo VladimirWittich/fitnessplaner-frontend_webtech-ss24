@@ -127,10 +127,6 @@ axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
     });
 
 
-// Daten beim Laden der Komponente abrufen
-onMounted(() => {
-  fetchData();
-});
 </script>
 
 
