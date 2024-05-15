@@ -47,6 +47,10 @@
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
+import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
+
+// Definition der Umgebungsvariablen
+const baseUrl = import.meta.env.VUE_APP_BACKEND_BASE_URL;
 
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
@@ -57,23 +61,19 @@ const newExercise = ref<Exercise>({
   totalweight: 0
 });
 
-// Funktion zum Löschen einer Übung
 function deleteExercise(index: number) {
   if (exercise.value) {
     exercise.value.splice(index, 1);
   }
 }
 
-// Funktion zum Aktualisieren der Wiederholungen basierend auf der Anzahl der Sätze
 const updateRepetitions = (value: number) => {
   newExercise.value.repetitions = new Array(value).fill(0);
 };
 
-// Variable zur Anzeige von Wiederholungsfeldern
 const displayRepetitionsInput = ref(false);
 const displayWeightInput = ref(false);
 
-// Funktion zum Hinzufügen einer neuen Übung
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
     exercise.value.push(newExercise.value);
@@ -87,7 +87,6 @@ const addNewExercise = () => {
   }
 };
 
-// Funktion zum Berechnen des Gesamtgewichts einer Übung
 const updateTotalWeight = () => {
   if (exercise.value) {
     exercise.value.forEach((exercise) => {
@@ -104,11 +103,10 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-// Funktion zum Abrufen von Daten vom Server
-const fetchData = () => {
-  const endpoint = process.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
-  axios.get(endpoint)
-      .then(response => {
+// Funktion zum Abrufen von Daten
+function fetchData() {
+  axios.get(`${baseUrl}/workoutplan`)
+      .then(function (response) {
         const data = response.data;
         if (data && data.length > 0) {
           const firstExercise = data[0];
@@ -118,11 +116,10 @@ const fetchData = () => {
           newExercise.value.weight = new Array(firstExercise.sets).fill(0);
         }
       })
-      .catch(error => {
-        console.error('Fehler beim Abrufen der Daten:', error);
-        // Hier könntest du dem Benutzer eine Fehlermeldung anzeigen
+      .catch(function (error) {
+        console.error(error);
       });
-};
+}
 
 // Initialisierung der Daten beim Laden der Komponente
 onMounted(() => {
@@ -133,6 +130,7 @@ onMounted(() => {
 window.addEventListener('load', () => {
   fetchData();
 });
+
 </script>
 
 <style scoped>
