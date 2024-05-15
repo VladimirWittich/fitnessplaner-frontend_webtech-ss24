@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
@@ -99,29 +99,25 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-onMounted(() => {
-  const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
-  const requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-
-  axios.get(endpoint, requestOptions)
-      .then(function (response) {
-        const data = response.data;
-        if (data && data.length > 0) {
-          const firstExercise = data[0];
-          newExercise.value.name = firstExercise.name;
-          newExercise.value.sets = firstExercise.sets;
-          newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
-          newExercise.value.weight = new Array(firstExercise.sets).fill(0);
-        }
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+onMounted(async () => {
+  try {
+    const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    if (data && data.length > 0) {
+      const firstExercise = data[0];
+      newExercise.value.name = firstExercise.name;
+      newExercise.value.sets = firstExercise.sets;
+      newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
+      newExercise.value.weight = new Array(firstExercise.sets).fill(0);
+    }
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
 });
-
 </script>
 
 <style scoped>
@@ -162,3 +158,4 @@ button {
   background-color: #f8f9fa;
 }
 </style>
+
