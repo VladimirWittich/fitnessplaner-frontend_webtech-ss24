@@ -120,6 +120,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
         // Hier kannst du Operationen ausführen, die immer ausgeführt werden sollen, z. B. das Ausblenden eines Ladeindikators
       });
 
+
 function fetchData() {
   const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
   axios.get(endpoint)
