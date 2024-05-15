@@ -120,7 +120,11 @@ onMounted(() => {
       })
       .catch(function (error) {
         console.error(error);
+      })
+      .finally(function () {
+        // Hier kannst du Operationen ausführen, die immer ausgeführt werden sollen, z. B. das Ausblenden eines Ladeindikators
       });
+
 });
 
 </script>
