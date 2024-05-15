@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
@@ -99,20 +99,28 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
-    .then(function (response) {
-      const data = response.data;
-      if (data && data.length > 0) {
-        const firstExercise = data[0];
-        newExercise.value.name = firstExercise.name;
-        newExercise.value.sets = firstExercise.sets;
-        newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
-        newExercise.value.weight = new Array(firstExercise.sets).fill(0);
-      }
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
+onMounted(() => {
+  const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/workoutplan';
+  const requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  axios.get(endpoint, requestOptions)
+      .then(function (response) {
+        const data = response.data;
+        if (data && data.length > 0) {
+          const firstExercise = data[0];
+          newExercise.value.name = firstExercise.name;
+          newExercise.value.sets = firstExercise.sets;
+          newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
+          newExercise.value.weight = new Array(firstExercise.sets).fill(0);
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+});
 </script>
 
 <style scoped>
@@ -153,4 +161,3 @@ button {
   background-color: #f8f9fa;
 }
 </style>
-
