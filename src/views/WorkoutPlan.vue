@@ -125,6 +125,24 @@ const fetchData = () => {
       });
 };
 
+axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
+    .then(function (response) {
+      // Handle success
+      // console.log(response);
+      const data = response.data;
+      if (data && data.length > 0) {
+        const firstExercise = data[0];
+        newExercise.value.name = firstExercise.name;
+        newExercise.value.sets = firstExercise.sets;
+        newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
+        newExercise.value.weight = new Array(firstExercise.sets).fill(0);
+      }
+    })
+    .catch(function (error) {
+      // Handle error
+      console.error(error);
+    });
+
 
 // Daten beim Laden der Komponente abrufen
 onMounted(() => {
