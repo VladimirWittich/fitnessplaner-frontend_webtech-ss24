@@ -108,7 +108,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 // Funktion zum Abrufen von Daten von der Backend-API
 const fetchData = () => {
-  const endpoint = process.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
+  const endpoint = import.meta.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
   axios.get(endpoint)
       .then(response => {
         const data = response.data;
@@ -125,6 +125,7 @@ const fetchData = () => {
         console.error('Error fetching data:', error);
       });
 };
+
 
 // Daten beim Laden der Komponente abrufen
 onMounted(() => {
