@@ -47,6 +47,7 @@ import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
+import process from "node:process";
 
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
@@ -100,7 +101,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 };
 
 onMounted(() => {
-  const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/workoutplan';
+  const endpoint = process.env.VUE_APP_BACKEND_BASE_URL + '/workoutplan';
   const requestOptions = {
     method: 'GET',
     redirect: 'follow'
