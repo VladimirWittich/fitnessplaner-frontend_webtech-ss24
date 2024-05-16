@@ -109,28 +109,36 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 
 const fetchData = () => {
-  const endpoint = 'https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan';
-  console.log('Fetching data from:', endpoint); // Debugging-Ausgabe
+  const endpoints = [
+    'https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan',
+    'http://localhost:10000/workoutplan'
+  ];
 
-  axios.get(endpoint)
-      .then(response => {
-        const data = response.data;
-        console.log('Received data:', data); // Debugging-Ausgabe
+  // Durchlaufen Sie jeden Endpunkt und senden Sie eine Anfrage
+  endpoints.forEach(endpoint => {
+    console.log('Fetching data from:', endpoint); // Debugging-Ausgabe
 
-        if (data && data.length > 0) {
-          const firstExercise = data[0];
-          newExercise.value.name = firstExercise.name;
-          newExercise.value.sets = firstExercise.sets;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+    axios.get(endpoint)
+        .then(response => {
+          const data = response.data;
+          console.log('Received data:', data); // Debugging-Ausgabe
+
+          if (data && data.length > 0) {
+            const firstExercise = data[0];
+            newExercise.value.name = firstExercise.name;
+            newExercise.value.sets = firstExercise.sets;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching data from', endpoint, ':', error);
+        });
+  });
 };
 
 onMounted(() => {
   fetchData();
 });
+
 
 
 
