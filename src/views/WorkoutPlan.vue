@@ -109,7 +109,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 
 const fetchData = () => {
-  const endpoint = `${import.meta.env.VUE_APP_BACKEND_BASE_URL}/workoutplan`;
+  const endpoint = 'https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan';
   axios.get(endpoint)
       .then(response => {
         const data = response.data;
@@ -128,7 +128,6 @@ onMounted(() => {
   fetchData();
 });
 
-// Daten beim Laden der Komponente abrufen
 
 </script>
 
