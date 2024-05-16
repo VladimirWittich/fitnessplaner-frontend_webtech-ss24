@@ -105,6 +105,9 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
+    onMounted(() => {
+  console.log('Hello World');
+});
 
 
 
