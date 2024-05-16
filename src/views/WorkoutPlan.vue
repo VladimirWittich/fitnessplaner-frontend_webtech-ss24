@@ -108,24 +108,25 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 
 
-axios.get('https://fitnessplaner-frontend-webtech-ss24-e6t9.onrender.com/workoutplan')
-    .then(function (response) {
-      // Handle success
-      // console.log(response);
-      const data = response.data;
-      if (data && data.length > 0) {
-        const firstExercise = data[0];
-        newExercise.value.name = firstExercise.name;
-        newExercise.value.sets = firstExercise.sets;
-        newExercise.value.repetitions = new Array(firstExercise.sets).fill(0);
-        newExercise.value.weight = new Array(firstExercise.sets).fill(0);
-      }
-    })
-    .catch(function (error) {
-      // Handle error
-      console.error(error);
-    });
+const fetchData = () => {
+  const endpoint = `${import.meta.env.VUE_APP_BACKEND_BASE_URL}/workoutplan`;
+  axios.get(endpoint)
+      .then(response => {
+        const data = response.data;
+        if (data && data.length > 0) {
+          const firstExercise = data[0];
+          newExercise.value.name = firstExercise.name;
+          newExercise.value.sets = firstExercise.sets;
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+};
 
+onMounted(() => {
+  fetchData();
+});
 
 // Daten beim Laden der Komponente abrufen
 
