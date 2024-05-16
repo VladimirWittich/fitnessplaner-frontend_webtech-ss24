@@ -52,15 +52,7 @@ const generateRepetitionsArray = (sets: number) => {
   return new Array(sets).fill(0); // Erzeugt ein Array mit der Länge von "sets" und füllt es mit Nullen
 }
 
-const fetchData = () => {
-  axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
-      .then(response => {
-        model.value = response.data;
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-}
+
 
 const onSetsChange = (index: number, newSets: number) => {
   if (model.value) {
@@ -84,7 +76,6 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-fetchData(); // Daten beim Laden der Komponente abrufen
 
 </script>
 

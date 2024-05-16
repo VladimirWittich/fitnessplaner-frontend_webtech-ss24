@@ -108,7 +108,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 
 
-axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
+axios.get('https://fitnessplaner-frontend-webtech-ss24-e6t9.onrender.com/workoutplan')
     .then(function (response) {
       // Handle success
       // console.log(response);
@@ -126,6 +126,8 @@ axios.get('https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan')
       console.error(error);
     });
 
+
+// Daten beim Laden der Komponente abrufen
 
 </script>
 
