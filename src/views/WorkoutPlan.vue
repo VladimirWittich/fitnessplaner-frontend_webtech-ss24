@@ -110,9 +110,13 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 const fetchData = () => {
   const endpoint = 'https://fitnessplaner-backend-webtech-ss24.onrender.com/workoutplan';
+  console.log('Fetching data from:', endpoint); // Debugging-Ausgabe
+
   axios.get(endpoint)
       .then(response => {
         const data = response.data;
+        console.log('Received data:', data); // Debugging-Ausgabe
+
         if (data && data.length > 0) {
           const firstExercise = data[0];
           newExercise.value.name = firstExercise.name;
@@ -127,6 +131,7 @@ const fetchData = () => {
 onMounted(() => {
   fetchData();
 });
+
 
 
 </script>
