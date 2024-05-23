@@ -1,14 +1,12 @@
 <template>
-  <!-- Vertikale Anordnung -->
   <div class="container">
     <h4 class="profile-welcome">You can do it Vladimir!</h4>
     <div>
       <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
     </div>
 
-    <!-- Vertikale Anordnung der Inhalte -->
     <div class="exercise-list-container">
-      <ExerciseListComponent v-model="exercise"></ExerciseListComponent>
+      <ExerciseListComponent v-model="exercise" />
       <button class="btn btn-primary" v-if="exercise && exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
 
       <div class="new-exercise-form">
@@ -19,31 +17,29 @@
           <label>Sets:</label>
           <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)">
 
-          <!-- Dynamisch generierte Repetitions-Felder -->
           <template v-if="displayRepetitionsInput">
             <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
-              <label>Repetitions {{ index + 1 }}</label>
+              <label>Repetitions {{ index + 1 }}:</label>
               <input type="number" v-model="newExercise.repetitions[index]">
             </div>
           </template>
 
-          <!-- Gewichtsfelder -->
           <template v-if="displayWeightInput">
             <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
-              <label>Weight {{ index + 1 }}</label>
+              <label>Weight {{ index + 1 }}:</label>
               <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
             </div>
           </template>
         </div>
 
-        <button class="btn btn-primary" @click="addNewExercise()">Add Exercise</button>
+        <button class="btn btn-primary" @click="addNewExercise">Add Exercise</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
@@ -68,16 +64,23 @@ function deleteExercise(index: number) {
 // Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
   newExercise.value.repetitions = new Array(value).fill(0);
+  newExercise.value.weight = new Array(value).fill(0);
 };
 
 // Variablen für die Anzeige der Eingabefelder initialisieren
 const displayRepetitionsInput = ref(false);
 const displayWeightInput = ref(false);
 
+// Überwachung der Sets-Änderung, um Eingabefelder anzuzeigen/verstecken
+watch(() => newExercise.value.sets, (newValue) => {
+  displayRepetitionsInput.value = newValue > 0;
+  displayWeightInput.value = newValue > 0;
+});
+
 // Funktion zum Hinzufügen einer neuen Übung
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
-    exercise.value.push(newExercise.value);
+    exercise.value.push({ ...newExercise.value });
     newExercise.value = {
       name: '',
       sets: 0,
@@ -90,10 +93,8 @@ const addNewExercise = () => {
 
 // Funktion zum Aktualisieren des Gesamtgewichts
 const updateTotalWeight = () => {
-  if (exercise.value) {
-    exercise.value.forEach((exercise) => {
-      exercise.totalweight = calculateTotalWeight(exercise);
-    });
+  if (newExercise.value) {
+    newExercise.value.totalweight = calculateTotalWeight(newExercise.value);
   }
 };
 
@@ -105,42 +106,39 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
-    onMounted(() => {
-  console.log('Hello World');
+
+onMounted(() => {
+  axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan')
+      .then((response) => {
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          // Nehmen Sie an, dass die erste Übung im Array die Daten für newExercise enthält
+          const firstExercise = response.data[0];
+          newExercise.value.name = firstExercise.name;
+          newExercise.value.sets = firstExercise.sets;
+          newExercise.value.repetitions = firstExercise.repetitions;
+          newExercise.value.weight = firstExercise.weight;
+        } else {
+          console.error('Expected array from backend with at least one exercise, got:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 });
-
-
-
-    axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan')
-        .then(function (response) {
-          // handle success
-          // console.log("response")
-          console.log(response);
-          exercise.value = response.data
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        })
-        .finally(function () {
-          // always executed
-        });
-
-
 
 
 
 </script>
 
-
 <style scoped>
-.container,
-.exercise-list-container,
-.new-exercise-form {
-  text-align: left; /* Alle Container linksbündig ausrichten */
+.container {
+  margin-top: 20px;
 }
 
-/* Du kannst die folgenden Regeln entfernen, da sie nicht mehr benötigt werden */
+.bg-light-gray {
+  background-color: #f8f9fa;
+}
+
 .new-exercise-form input[type="text"],
 .new-exercise-form input[type="number"] {
   width: 80%;
@@ -165,9 +163,5 @@ const calculateTotalWeight = (exercise: Exercise) => {
 input,
 button {
   margin-bottom: 10px;
-}
-
-.bg-light-gray {
-  background-color: #f8f9fa;
 }
 </style>

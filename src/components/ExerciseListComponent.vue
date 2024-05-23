@@ -1,8 +1,7 @@
 <template>
   <div class="exercise-list-container">
-    <!-- Container wird nur angezeigt, wenn mindestens eine Übung vorhanden ist -->
-    <div v-if="model && model.length > 0" class="container bg-light-gray p-4">
-      <div class="exercise-item" v-for="(exercise, index) in model" :key="index">
+    <div v-if="modelValue && modelValue.length > 0" class="container bg-light-gray p-4">
+      <div class="exercise-item" v-for="(exercise, index) in modelValue" :key="index">
         <div class="exercise-row">
           <div class="exercise-label">Exercise name:</div>
           <div class="exercise-value">{{ exercise.name }}</div>
@@ -15,8 +14,6 @@
           </div>
         </div>
 
-
-        <!-- Dynamisch generierte Felder für Repetitions und Gewicht -->
         <template v-if="exercise.sets && exercise.repetitions">
           <template v-for="(repetition, repetitionIndex) in exercise.repetitions" :key="repetitionIndex">
             <div class="exercise-row">
@@ -42,27 +39,26 @@
 </template>
 
 <script setup lang="ts">
-import { defineModel } from 'vue'
+import { defineProps } from 'vue';
 import type { Exercise } from "@/model/model";
-import axios from 'axios';
 
-const model = defineModel<Exercise[] | undefined>()
+const props = defineProps<{
+  modelValue: Exercise[]
+}>();
 
 const generateRepetitionsArray = (sets: number) => {
-  return new Array(sets).fill(0); // Erzeugt ein Array mit der Länge von "sets" und füllt es mit Nullen
+  return new Array(sets).fill(0);
 }
 
-
-
 const onSetsChange = (index: number, newSets: number) => {
-  if (model.value) {
-    model.value[index].repetitions = generateRepetitionsArray(newSets);
+  if (props.modelValue) {
+    props.modelValue[index].repetitions = generateRepetitionsArray(newSets);
   }
 }
 
 const updateTotalWeight = () => {
-  if (model.value) {
-    model.value.forEach((exercise) => {
+  if (props.modelValue) {
+    props.modelValue.forEach((exercise) => {
       exercise.totalweight = calculateTotalWeight(exercise);
     });
   }
@@ -75,8 +71,6 @@ const calculateTotalWeight = (exercise: Exercise) => {
   }
   return totalWeight;
 };
-
-
 </script>
 
 <style scoped>
@@ -85,7 +79,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 }
 
 .bg-light-gray {
-  background-color: #f8f9fa; /* Hintergrundfarbe grau */
+  background-color: #f8f9fa;
 }
 
 .exercise-item {
@@ -94,7 +88,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 .exercise-value input[type="number"] {
   width: 80%;
-  margin-bottom: 10px; /* Fügt einen zusätzlichen Abstand zwischen dem Label und dem Eingabefeld hinzu */
+  margin-bottom: 10px;
 }
 
 .exercise-row {
@@ -103,21 +97,19 @@ const calculateTotalWeight = (exercise: Exercise) => {
 }
 
 .exercise-value {
-  flex: 1; /* Verteilt den verfügbaren Platz zwischen dem Label und dem Eingabefeld */
+  flex: 1;
 }
 
 .exercise-label {
-  min-width: 120px; /* Mindestbreite des Labels */
+  min-width: 120px;
 }
 
-/* Für kleinere Bildschirme */
 @media (max-width: 767px) {
   .exercise-label {
-    min-width: auto; /* Mindestbreite auf auto setzen, um Platz für den Text zuzulassen */
+    min-width: auto;
   }
   .exercise-value input[type="number"] {
-    width: 100%; /* Die Breite des Eingabefelds auf 100% setzen, um den verfügbaren Platz auszufüllen */
+    width: 100%;
   }
 }
-
 </style>
