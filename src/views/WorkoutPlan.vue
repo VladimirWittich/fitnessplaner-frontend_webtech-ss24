@@ -137,12 +137,13 @@ onMounted(() => {
         }
       })
       .catch((error) => {
-        console.error('Error fetching data from backend:', error);
+        console.error('Error fetching data from backend:', error.response ? error.response.data : error.message);
       });
 });
 
 // Beobachten der exercise-Ref, um bei Änderungen die Daten zu speichern
 watch(exercise, saveExercisesToLocalStorage, { deep: true });
+
 
 </script>
 
