@@ -1,14 +1,9 @@
-import './assets/main.css'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router'; // Importieren des Routers
 
-import { createApp } from 'vue'
+const app = createApp(App);
 
-import App from './App.vue'
-import router from './router'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+app.use(router); // Verwenden des Routers
 
-const app = createApp(App)
-
-app.use(router)
-
-app.mount('#app')
+app.mount('#app');

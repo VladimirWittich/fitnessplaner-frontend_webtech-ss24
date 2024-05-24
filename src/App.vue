@@ -1,15 +1,15 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-
-import Navbar from '@/components/Navbar.vue'
-</script>
-
 <template>
-  <navbar></navbar>
-
-  <RouterView />
+  <div id="app">
+    <Navbar />
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { RouterView } from 'vue-router';
+import Navbar from '@/components/Navbar.vue';
+</script>
 
+<style scoped>
+/* Ihr Style-Inhalt hier */
 </style>
