@@ -127,7 +127,6 @@ onMounted(() => {
   axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan')
       .then((response) => {
         if (Array.isArray(response.data) && response.data.length > 0) {
-          // Nehmen Sie an, dass die erste Übung im Array die Daten für newExercise enthält
           const firstExercise = response.data[0];
           newExercise.value.name = firstExercise.name;
           newExercise.value.sets = firstExercise.sets;
@@ -138,7 +137,7 @@ onMounted(() => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error('Error fetching data from backend:', error);
       });
 });
 
@@ -146,7 +145,6 @@ onMounted(() => {
 watch(exercise, saveExercisesToLocalStorage, { deep: true });
 
 </script>
-
 
 <style scoped>
 .container {
