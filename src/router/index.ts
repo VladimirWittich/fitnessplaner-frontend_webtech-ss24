@@ -1,12 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import AboutView from '@/views/AboutView.vue'
-import HomeView from '@/views/HomeView.vue'
-import MyProfile from '@/views/MyProfile.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'; // Beachte die Änderung hier
+
+import AboutView from '@/views/AboutView.vue';
+import HomeView from '@/views/HomeView.vue';
+import MyProfile from '@/views/MyProfile.vue';
 import WorkoutPlan from "@/views/WorkoutPlan.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  linkActiveClass: `active`,
+  history: createWebHashHistory(), // Ändere createWebHistory zu createWebHashHistory
+  linkActiveClass: 'active',
   routes: [
     {
       path: '/',
@@ -29,7 +30,6 @@ const router = createRouter({
       component: WorkoutPlan
     }
   ]
+});
 
-})
-
-export default router
+export default router;
