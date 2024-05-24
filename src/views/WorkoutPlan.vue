@@ -126,8 +126,6 @@ onMounted(() => {
       });
 });
 
-
-
 </script>
 
 <style scoped>
@@ -157,7 +155,6 @@ onMounted(() => {
 
 .profile-welcome {
   margin-top: 80px;
-  text-align: left;
 }
 
 input,
