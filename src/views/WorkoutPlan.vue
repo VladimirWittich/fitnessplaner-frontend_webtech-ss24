@@ -58,6 +58,7 @@ const newExercise = ref<Exercise>({
 function deleteExercise(index: number) {
   if (exercise.value) {
     exercise.value.splice(index, 1);
+    saveExercisesToLocalStorage();
   }
 }
 
@@ -81,6 +82,7 @@ watch(() => newExercise.value.sets, (newValue) => {
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
     exercise.value.push({ ...newExercise.value });
+    saveExercisesToLocalStorage();
     newExercise.value = {
       name: '',
       sets: 0,
@@ -107,7 +109,21 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
+// Funktion zum Speichern der Übungen in localStorage
+const saveExercisesToLocalStorage = () => {
+  localStorage.setItem('exercises', JSON.stringify(exercise.value));
+};
+
+// Funktion zum Laden der Übungen aus localStorage
+const loadExercisesFromLocalStorage = () => {
+  const storedExercises = localStorage.getItem('exercises');
+  if (storedExercises) {
+    exercise.value = JSON.parse(storedExercises);
+  }
+};
+
 onMounted(() => {
+  loadExercisesFromLocalStorage();
   axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan')
       .then((response) => {
         if (Array.isArray(response.data) && response.data.length > 0) {
@@ -126,9 +142,11 @@ onMounted(() => {
       });
 });
 
-
+// Beobachten der exercise-Ref, um bei Änderungen die Daten zu speichern
+watch(exercise, saveExercisesToLocalStorage, { deep: true });
 
 </script>
+
 
 <style scoped>
 .container {
