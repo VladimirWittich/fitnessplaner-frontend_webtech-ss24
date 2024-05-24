@@ -36,6 +36,8 @@
       </div>
     </div>
   </div>
+  <!-- Hier wird der geroutete Inhalt angezeigt -->
+  <router-view></router-view>
 </template>
 
 <script setup lang="ts">
@@ -54,10 +56,18 @@ const newExercise = ref<Exercise>({
   totalweight: 0
 });
 
+// Überprüfen, ob Daten im LocalStorage vorhanden sind
+const savedExercises = localStorage.getItem('exercises');
+if (savedExercises) {
+  exercise.value = JSON.parse(savedExercises);
+}
+
 // Funktion zum Löschen einer Übung
 function deleteExercise(index: number) {
   if (exercise.value) {
     exercise.value.splice(index, 1);
+    // Speichern der aktualisierten Übungsdaten im LocalStorage
+    localStorage.setItem('exercises', JSON.stringify(exercise.value));
   }
 }
 
@@ -81,6 +91,8 @@ watch(() => newExercise.value.sets, (newValue) => {
 const addNewExercise = () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
     exercise.value.push({ ...newExercise.value });
+    // Speichern der neuen Übung im LocalStorage
+    localStorage.setItem('exercises', JSON.stringify(exercise.value));
     newExercise.value = {
       name: '',
       sets: 0,
@@ -125,8 +137,6 @@ onMounted(() => {
         console.log(error);
       });
 });
-
-
 
 </script>
 
