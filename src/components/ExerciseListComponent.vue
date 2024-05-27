@@ -59,7 +59,7 @@ const onSetsChange = (index: number, newSets: number) => {
 const updateTotalWeight = () => {
   if (props.modelValue) {
     props.modelValue.forEach((exercise) => {
-      exercise.totalweight = calculateTotalWeight(exercise);
+      exercise.totalWeight = calculateTotalWeight(exercise);
     });
   }
 };

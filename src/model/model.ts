@@ -3,6 +3,6 @@ export type Exercise = {
     sets: number,
     repetitions: number[],
     weight: number[],
-    totalweight: number
+    totalWeight: number
 
 }

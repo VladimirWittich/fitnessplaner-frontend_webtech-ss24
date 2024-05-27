@@ -7,7 +7,7 @@
 
     <div class="exercise-list-container">
       <ExerciseListComponent v-model="exercise" />
-      <button class="btn btn-primary" v-if="exercise && exercise.length > 0" @click="deleteExercise(0)">Delete Exercise</button>
+      <button class="btn btn-primary" v-if="exercise && exercise.length > 0" @click="deleteExercise(0)">Hide Exercise</button>
 
       <div class="new-exercise-form">
         <div class="container bg-light-gray p-4">
@@ -25,7 +25,7 @@
           </template>
 
           <template v-if="displayWeightInput">
-            <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
+            <div v-for="(weight, index) in newExercise.weight" :key="index">
               <label>Weight {{ index + 1 }}:</label>
               <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
             </div>
@@ -51,7 +51,7 @@ const newExercise = ref<Exercise>({
   sets: 0,
   repetitions: [],
   weight: [],
-  totalweight: 0
+  totalWeight: 0
 });
 
 // Funktion zum Löschen einer Übung
@@ -78,23 +78,32 @@ watch(() => newExercise.value.sets, (newValue) => {
 });
 
 // Funktion zum Hinzufügen einer neuen Übung
-const addNewExercise = () => {
+const addNewExercise = async () => {
   if (newExercise.value.name && newExercise.value.sets > 0) {
-    exercise.value.push({ ...newExercise.value });
-    newExercise.value = {
-      name: '',
-      sets: 0,
-      repetitions: [],
-      weight: [],
-      totalweight: 0
-    };
+    try {
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      exercise.value.push(response.data);
+      newExercise.value = {
+        name: '',
+        sets: 0,
+        repetitions: [],
+        weight: [],
+        totalWeight: 0
+      };
+    } catch (error) {
+      console.error('Failed to add exercise:', error);
+    }
   }
 };
 
 // Funktion zum Aktualisieren des Gesamtgewichts
 const updateTotalWeight = () => {
   if (newExercise.value) {
-    newExercise.value.totalweight = calculateTotalWeight(newExercise.value);
+    newExercise.value.totalWeight = calculateTotalWeight(newExercise.value);
   }
 };
 
@@ -115,8 +124,7 @@ onMounted(() => {
           const firstExercise = response.data[0];
           newExercise.value.name = firstExercise.name;
           newExercise.value.sets = firstExercise.sets;
-          newExercise.value.repetitions = firstExercise.repetitions;
-          newExercise.value.weight = firstExercise.weight;
+
         } else {
           console.error('Expected array from backend with at least one exercise, got:', response.data);
         }
@@ -125,7 +133,6 @@ onMounted(() => {
         console.log(error);
       });
 });
-
 </script>
 
 <style scoped>
