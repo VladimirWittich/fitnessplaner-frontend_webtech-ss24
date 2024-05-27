@@ -4,7 +4,7 @@
     <input type="text" v-model="searchQuery" placeholder="Search by name">
     <ul>
       <li v-for="item in filteredItems" :key="item.id">
-        {{ item.name }} - Sets: {{ item.sets }}, Repetitions: {{ item.repetitions }}, Weight: {{ item.weight }}, Total Weight: {{ item.totalWeight }}
+        {{ item.name }} - Sets: {{ item.sets }}, Repetitions: {{ item.repetitions }}, Weight: {{ item.weight }}, Total Weight: {{ item.totalWeight }}, Date: {{ formatDate(item.createdAt) }}
       </li>
     </ul>
   </div>
@@ -22,9 +22,9 @@ interface ExerciseItem {
   repetitions: string;
   weight: string;
   totalWeight: number;
+  createdAt: string; // Expecting an ISO string from the backend
 }
 
-// Verwendung von ExerciseItem als Typ für historyItems
 const historyItems = ref<ExerciseItem[]>([]);
 const searchQuery = ref<string>('');
 
@@ -42,6 +42,12 @@ onMounted(async () => {
 const filteredItems = computed(() => {
   return historyItems.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
+
+// Formatieren des Datums
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleString(); // Customize this if you need a different format
+}
 </script>
 
 <style scoped>
