@@ -33,6 +33,9 @@
         </div>
 
         <button class="btn btn-primary" @click="addNewExercise">Add Exercise</button>
+        <router-link to="/history" class="btn btn-primary">Go to history</router-link>
+
+
       </div>
     </div>
   </div>
@@ -43,6 +46,7 @@ import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
+import HistoryView from "@/views/HistoryView.vue";
 
 // Refs für Übungen und neue Übung erstellen
 const exercise = ref<Exercise[]>([]);
@@ -79,7 +83,9 @@ watch(() => newExercise.value.sets, (newValue) => {
 
 // Funktion zum Hinzufügen einer neuen Übung
 const addNewExercise = async () => {
-  if (newExercise.value.name && newExercise.value.sets > 0) {
+  if (newExercise.value.name && newExercise.value.sets > 0 &&
+      newExercise.value.repetitions.every(rep => rep > 0) &&
+      newExercise.value.weight.every(w => w > 0)) {
     try {
       const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
         headers: {
@@ -97,8 +103,11 @@ const addNewExercise = async () => {
     } catch (error) {
       console.error('Failed to add exercise:', error);
     }
+  } else {
+    alert('Please fill in all required fields (name, sets, repetitions, weight) before adding the exercise.');
   }
 };
+
 
 // Funktion zum Aktualisieren des Gesamtgewichts
 const updateTotalWeight = () => {
@@ -122,7 +131,6 @@ onMounted(() => {
         if (Array.isArray(response.data) && response.data.length > 0) {
           // Nehmen Sie an, dass die erste Übung im Array die Daten für newExercise enthält
           const firstExercise = response.data[0];
-          newExercise.value.name = firstExercise.name;
           newExercise.value.sets = firstExercise.sets;
 
         } else {

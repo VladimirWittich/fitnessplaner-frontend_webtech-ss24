@@ -4,6 +4,7 @@ import AboutView from '@/views/AboutView.vue';
 import HomeView from '@/views/HomeView.vue';
 import MyProfile from '@/views/MyProfile.vue';
 import WorkoutPlan from "@/views/WorkoutPlan.vue";
+import HistoryView from "@/views/HistoryView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(), // Ändere createWebHistory zu createWebHashHistory
@@ -28,6 +29,11 @@ const router = createRouter({
       path: '/workoutplan',
       name: 'workoutplan',
       component: WorkoutPlan
+    },
+    {
+      path: '/history',
+      name: 'History',
+      component: HistoryView
     }
   ]
 });
