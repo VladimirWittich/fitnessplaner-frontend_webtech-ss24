@@ -63,6 +63,12 @@ const newExercise = ref<Exercise>({
 // Variable zur Anzeige des Buttons "Add to my History" initialisieren
 const isReadyToAddToHistory = ref(false);
 
+// Funktion zum Löschen einer Übung
+function deleteExercise(index: number) {
+  if (exercise.value) {
+    exercise.value.splice(index, 1);
+  }
+}
 
 // Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
@@ -189,7 +195,6 @@ onMounted(() => {
 input,
 button {
   margin-bottom: 0px;
-
 }
 </style>
 
