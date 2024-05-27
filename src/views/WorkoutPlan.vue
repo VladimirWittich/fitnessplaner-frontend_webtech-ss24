@@ -30,12 +30,12 @@
               <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
             </div>
           </template>
+
+          <button class="btn btn-primary" v-if="isReadyToAddToHistory" @click="addToHistory">Add to my History</button>
         </div>
 
         <button class="btn btn-primary" @click="addNewExercise">Add Exercise</button>
         <router-link to="/history" class="btn btn-primary">Go to history</router-link>
-
-
       </div>
     </div>
   </div>
@@ -46,7 +46,6 @@ import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
-import HistoryView from "@/views/HistoryView.vue";
 
 // Refs für Übungen und neue Übung erstellen
 const exercise = ref<Exercise[]>([]);
@@ -55,8 +54,11 @@ const newExercise = ref<Exercise>({
   sets: 0,
   repetitions: [],
   weight: [],
-  totalWeight: 0
+  totalWeight: 0.
 });
+
+// Variable zur Anzeige des Buttons "Add to my History" initialisieren
+const isReadyToAddToHistory = ref(false);
 
 // Funktion zum Löschen einer Übung
 function deleteExercise(index: number) {
@@ -86,28 +88,38 @@ const addNewExercise = async () => {
   if (newExercise.value.name && newExercise.value.sets > 0 &&
       newExercise.value.repetitions.every(rep => rep > 0) &&
       newExercise.value.weight.every(w => w > 0)) {
-    try {
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      exercise.value.push(response.data);
-      newExercise.value = {
-        name: '',
-        sets: 0,
-        repetitions: [],
-        weight: [],
-        totalWeight: 0
-      };
-    } catch (error) {
-      console.error('Failed to add exercise:', error);
-    }
+    isReadyToAddToHistory.value = true; // Setze isReadyToAddToHistory auf true, wenn alle Bedingungen erfüllt sind
   } else {
     alert('Please fill in all required fields (name, sets, repetitions, weight) before adding the exercise.');
   }
 };
 
+// Funktion zum Hinzufügen der Übung zum Verlauf
+const addToHistory = async () => {
+  try {
+    const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    exercise.value.push(response.data);
+    resetForm(); // Formular zurücksetzen, nachdem die Übung hinzugefügt wurde
+  } catch (error) {
+    console.error('Failed to add exercise:', error);
+  }
+};
+
+// Funktion zum Zurücksetzen des Formulars
+const resetForm = () => {
+  newExercise.value = {
+    name: '',
+    sets: 0,
+    repetitions: [],
+    weight: [],
+    totalWeight: 0
+  };
+  isReadyToAddToHistory.value = false; // Setze isReadyToAddToHistory auf false zurück
+};
 
 // Funktion zum Aktualisieren des Gesamtgewichts
 const updateTotalWeight = () => {
@@ -177,3 +189,4 @@ button {
   margin-bottom: 10px;
 }
 </style>
+
