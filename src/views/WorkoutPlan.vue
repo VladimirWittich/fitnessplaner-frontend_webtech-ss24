@@ -31,7 +31,10 @@
             </div>
           </template>
 
-          <button class="btn btn-primary" v-if="isReadyToAddToHistory" @click="addToHistory">Add to my History</button>
+          <div v-if="isReadyToAddToHistory">
+            <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
+            <button class="btn btn-danger" @click="cancel">Cancel</button> <!-- Cancel-Button hinzugefügt -->
+          </div>
         </div>
 
         <button class="btn btn-primary" @click="addNewExercise">Add Exercise</button>
@@ -60,12 +63,6 @@ const newExercise = ref<Exercise>({
 // Variable zur Anzeige des Buttons "Add to my History" initialisieren
 const isReadyToAddToHistory = ref(false);
 
-// Funktion zum Löschen einer Übung
-function deleteExercise(index: number) {
-  if (exercise.value) {
-    exercise.value.splice(index, 1);
-  }
-}
 
 // Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
@@ -119,6 +116,11 @@ const resetForm = () => {
     totalWeight: 0
   };
   isReadyToAddToHistory.value = false; // Setze isReadyToAddToHistory auf false zurück
+};
+
+// Funktion zum Abbrechen der Eingabe
+const cancel = () => {
+  resetForm();
 };
 
 // Funktion zum Aktualisieren des Gesamtgewichts
@@ -186,7 +188,8 @@ onMounted(() => {
 
 input,
 button {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
+
 }
 </style>
 
