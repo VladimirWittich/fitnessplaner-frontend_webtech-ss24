@@ -15,7 +15,7 @@
           <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
           <label>Sets:</label>
-          <input type="number" v-model="newExercise.sets" placeholder="0">
+          <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)" placeholder="0">
 
           <template v-if="displayRepetitionsInput && displayWeightInput">
             <div class="row">
