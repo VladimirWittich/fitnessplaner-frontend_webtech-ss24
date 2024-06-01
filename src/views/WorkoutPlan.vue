@@ -24,11 +24,11 @@
                   <div class="exercise-row d-flex">
                     <div class="exercise-label flex-grow-1">Repetitions {{ index + 1 }}:</div>
                     <div class="exercise-value">
-                      <input type="number" v-model="newExercise.repetitions[index]">
+                      <input type="number" v-model="newExercise.repetitions[index]" :placeholder="'0'" :value="newExercise.repetitions[index] === null ? '' : newExercise.repetitions[index]">
                     </div>
                     <div class="exercise-label">Weight:</div>
                     <div class="exercise-value">
-                      <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
+                      <input type="number" v-model="newExercise.weight[index]" :placeholder="'0'" :value="newExercise.weight[index] === null ? '' : newExercise.weight[index]" @input="updateTotalWeight()">
                     </div>
                   </div>
                 </div>
@@ -36,11 +36,9 @@
             </div>
           </template>
 
-
-
           <div v-if="isReadyToAddToHistory">
             <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
-            <button class="btn btn-danger" @click="cancel">Cancel</button> <!-- Cancel-Button hinzugefügt -->
+            <button class="btn btn-danger" @click="cancel">Cancel</button>
           </div>
         </div>
 
@@ -79,8 +77,8 @@ function deleteExercise(index: number) {
 
 // Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
-  newExercise.value.repetitions = new Array(value).fill(0);
-  newExercise.value.weight = new Array(value).fill(0);
+  newExercise.value.repetitions = new Array(value).fill(null);
+  newExercise.value.weight = new Array(value).fill(null);
 };
 
 // Variablen für die Anzeige der Eingabefelder initialisieren
@@ -123,7 +121,7 @@ const addToHistory = async () => {
 const resetForm = () => {
   newExercise.value = {
     name: '',
-    sets: 0,
+    sets: null,
     repetitions: [],
     weight: [],
     totalWeight: 0
@@ -152,20 +150,6 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-onMounted(() => {
-  axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan')
-      .then((response) => {
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          // Nehmen Sie an, dass die erste Übung im Array die Daten für newExercise enthält
-
-        } else {
-          console.error('Expected array from backend with at least one exercise, got:', response.data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-});
 </script>
 
 <style scoped>
@@ -202,18 +186,15 @@ button {
   margin-bottom: 0px;
 }
 
-
-
 .exercise-label {
-  flex-grow: 1; /* Ändern Sie den Flex-Grow-Wert auf 2 oder ein anderes Zahl nach Bedarf */
+  flex-grow: 1;
 }
 
 .exercise-value {
-  width: 55px; /* Justieren Sie den Abstand zwischen Label und Input nach Bedarf */
+  width: 55px;
 }
 
 .exercise-value input {
-  margin-left: 0px; /* Justieren Sie den Abstand zwischen Label und Input nach Bedarf */
+  margin-left: 0px;
 }
-
 </style>

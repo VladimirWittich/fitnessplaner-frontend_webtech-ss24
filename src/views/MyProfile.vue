@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="greeting">Welcome to your profile, Vladimir!</h4>
+    <h4 class="greeting">Welcome to your profile, {{ userName }}!</h4>
   </div>
 
   <div class="myprofile">
@@ -40,6 +40,7 @@
 import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 
+const userName = ref<string>('');
 const height = ref<number>(0);
 const weight = ref<number>(0);
 const gender = ref<string>('male');
@@ -102,16 +103,33 @@ const fetchDailyImprovements = async () => {
   }
 };
 
-// Abrufen der täglichen Verbesserungen bei der Komponenten-Montage
+// Abrufen der Benutzerprofil-Daten beim Laden der Komponente
 onMounted(() => {
+  axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile')
+      .then((response) => {
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          const userProfile = response.data[0]; // Annahme: Die Daten für das erste Benutzerprofil im Array
+          userName.value = userProfile.name;
+          height.value = userProfile.height;
+          weight.value = userProfile.weight;
+          gender.value = userProfile.gender;
+          calculateBMI(); // BMI neu berechnen basierend auf den erhaltenen Profildaten
+        } else {
+          console.error('Expected array from backend with at least one user profile, got:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching user profile:', error);
+      });
+
   fetchDailyImprovements();
-  calculateBMI();
 });
 
 // Überwachung von Änderungen an Größe, Gewicht und Geschlecht
 watch([height, weight, gender], () => {
   calculateBMI();
 });
+
 </script>
 
 <style scoped>
