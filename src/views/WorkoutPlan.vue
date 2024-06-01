@@ -15,7 +15,7 @@
           <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
           <label>Sets:</label>
-          <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)" placeholder="0">
+          <input type="number" v-model="newExercise.sets" @input="updateRepetitions(newExercise.sets)" placeholder="0">
 
           <template v-if="displayRepetitionsInput && displayWeightInput">
             <div class="row">
@@ -34,15 +34,16 @@
                 </div>
               </template>
             </div>
-          </template>
 
-          <div v-if="isReadyToAddToHistory">
-            <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
-            <button class="btn btn-danger" @click="cancel">Cancel</button>
-          </div>
+            <!-- Schaltflächen Add to my History und Cancel -->
+            <div class="mt-3">
+              <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
+              <button class="btn btn-danger" @click="cancel">Cancel</button>
+            </div>
+          </template>
         </div>
 
-        <button class="btn btn-primary" @click="addNewExercise">Add Exercise</button>
+        <button class="btn btn-primary" @click="showInputs">Add new exercise</button>
         <router-link to="/history" class="btn btn-primary">Go to history</router-link>
       </div>
     </div>
@@ -50,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
@@ -62,11 +63,12 @@ const newExercise = ref<Exercise>({
   sets: null,
   repetitions: [],
   weight: [],
-  totalWeight: 0.
+  totalWeight: 0
 });
 
-// Variable zur Anzeige des Buttons "Add to my History" initialisieren
-const isReadyToAddToHistory = ref(false);
+// Variable zur Anzeige der Eingabefelder und Buttons initialisieren
+const displayRepetitionsInput = ref(false);
+const displayWeightInput = ref(false);
 
 // Funktion zum Löschen einer Übung
 function deleteExercise(index: number) {
@@ -77,13 +79,11 @@ function deleteExercise(index: number) {
 
 // Funktion zum Aktualisieren der Anzahl der Wiederholungen
 const updateRepetitions = (value: number) => {
-  newExercise.value.repetitions = new Array(value).fill(null);
-  newExercise.value.weight = new Array(value).fill(null);
+  if (value >= 0) {
+    newExercise.value.repetitions = new Array(value).fill(null);
+    newExercise.value.weight = new Array(value).fill(null);
+  }
 };
-
-// Variablen für die Anzeige der Eingabefelder initialisieren
-const displayRepetitionsInput = ref(false);
-const displayWeightInput = ref(false);
 
 // Überwachung der Sets-Änderung, um Eingabefelder anzuzeigen/verstecken
 watch(() => newExercise.value.sets, (newValue) => {
@@ -91,29 +91,30 @@ watch(() => newExercise.value.sets, (newValue) => {
   displayWeightInput.value = newValue > 0;
 });
 
-// Funktion zum Hinzufügen einer neuen Übung
-const addNewExercise = async () => {
-  if (newExercise.value.name && newExercise.value.sets > 0 &&
-      newExercise.value.repetitions.every(rep => rep > 0) &&
-      newExercise.value.weight.every(w => w > 0)) {
-    isReadyToAddToHistory.value = true; // Setze isReadyToAddToHistory auf true, wenn alle Bedingungen erfüllt sind
-  } else {
-    alert('Please fill in all required fields (name, sets, repetitions, weight) before adding the exercise.');
-  }
+// Funktion zum Anzeigen der Eingabefelder und Buttons
+const showInputs = () => {
+  displayRepetitionsInput.value = true;
+  displayWeightInput.value = true;
 };
 
 // Funktion zum Hinzufügen der Übung zum Verlauf
 const addToHistory = async () => {
-  try {
-    const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    exercise.value.push(response.data);
-    resetForm(); // Formular zurücksetzen, nachdem die Übung hinzugefügt wurde
-  } catch (error) {
-    console.error('Failed to add exercise:', error);
+  if (newExercise.value.name && newExercise.value.sets > 0 &&
+      newExercise.value.repetitions.every(rep => rep > 0) &&
+      newExercise.value.weight.every(w => w > 0)) {
+    try {
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      exercise.value.push(response.data);
+      resetForm(); // Formular zurücksetzen, nachdem die Übung hinzugefügt wurde
+    } catch (error) {
+      console.error('Failed to add exercise:', error);
+    }
+  } else {
+    alert('Please fill in all required fields (name, sets, repetitions, weight) before adding the exercise to history.');
   }
 };
 
@@ -126,7 +127,8 @@ const resetForm = () => {
     weight: [],
     totalWeight: 0
   };
-  isReadyToAddToHistory.value = false; // Setze isReadyToAddToHistory auf false zurück
+  displayRepetitionsInput.value = false;
+  displayWeightInput.value = false;
 };
 
 // Funktion zum Abbrechen der Eingabe
