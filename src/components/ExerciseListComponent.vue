@@ -10,24 +10,22 @@
         <div class="exercise-row">
           <div class="exercise-label exercise-label-sets">Sets:</div>
           <div class="exercise-value">
-            <input type="number" v-model="exercise.sets" @change="onSetsChange(index, exercise.sets)">
+            {{ exercise.sets }}
           </div>
         </div>
+
 
         <template v-if="exercise.sets && exercise.repetitions">
           <template v-for="(repetition, repetitionIndex) in exercise.repetitions" :key="repetitionIndex">
             <div class="exercise-row">
               <div class="exercise-label">Repetitions {{ repetitionIndex + 1 }}:</div>
-              <div class="exercise-value">
-                <input type="number" v-model="exercise.repetitions[repetitionIndex]" @input="updateTotalWeight()">
-              </div>
+              <div class="exercise-value">{{ exercise.repetitions[repetitionIndex] }}</div>
               <div class="exercise-label">Weight:</div>
-              <div class="exercise-value">
-                <input type="number" v-model="exercise.weight[repetitionIndex]" @input="updateTotalWeight()">
-              </div>
+              <div class="exercise-value">{{ exercise.weight[repetitionIndex] }}</div>
             </div>
           </template>
         </template>
+
 
         <div class="exercise-row">
           <div class="exercise-label">Total weight:</div>
@@ -88,12 +86,13 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 .exercise-value input[type="number"] {
   width: 80%;
-  margin-bottom: 10px;
+  margin-bottom: 100px;
 }
 
 .exercise-row {
   display: flex;
   margin-bottom: 5px;
+
 }
 
 .exercise-value {
@@ -112,4 +111,11 @@ const calculateTotalWeight = (exercise: Exercise) => {
     width: 100%;
   }
 }
+
+.exercise-value
+
+{
+  margin-left: 5px;
+}
+
 </style>

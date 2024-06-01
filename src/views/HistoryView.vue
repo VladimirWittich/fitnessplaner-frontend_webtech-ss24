@@ -2,32 +2,23 @@
   <div class="container">
     <h4 class="profile-welcome">History Vladimir!</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
-    <table>
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Sets</th>
-        <th>Repetitions</th>
-        <th>Weight</th>
-        <th>Total Weight</th>
-        <th>Date</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="item in sortedAndFilteredItems" :key="item.id">
-        <td>{{ item.name }}</td>
-        <td>{{ item.sets }}</td>
-        <td>{{ item.repetitions }}</td>
-        <td>{{ item.weight }}</td>
-        <td>{{ item.totalWeight }}</td>
-        <td>{{ formatDate(item.createdAt) }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <ul>
+      <li v-if="filteredItems.length === 0">No exercises found</li>
+      <template v-for="(item, index) in filteredItems" :key="index">
+        <template v-if="index === 0 || item.name !== filteredItems[index - 1].name">
+          <li>{{ item.name }}</li>
+        </template>
+        <li>
+          <div>Sets: {{ item.sets }}</div>
+          <div>Repetitions: {{ item.repetitions }}</div>
+          <div>Weight: {{ item.weight }}</div>
+          <div>Total Weight: {{ item.totalWeight }}</div>
+          <div>Date: {{ formatDate(item.createdAt) }}</div>
+        </li>
+      </template>
+    </ul>
   </div>
 </template>
-
-
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
@@ -47,8 +38,6 @@ interface ExerciseItem {
 const historyItems = ref<ExerciseItem[]>([]);
 const searchQuery = ref<string>('');
 
-
-
 // Abrufen der Daten beim Komponentenstart
 onMounted(async () => {
   try {
@@ -59,18 +48,9 @@ onMounted(async () => {
   }
 });
 
-// Filtern und Sortieren der Elemente basierend auf der Suchanfrage
-const sortedAndFilteredItems = computed(() => {
-  return historyItems.value
-      .filter(item => item.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-      .sort((a, b) => {
-        // Zuerst nach Name sortieren
-        const nameComparison = a.name.localeCompare(b.name);
-        if (nameComparison !== 0) return nameComparison;
-
-        // Dann nach Datum sortieren
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
+// Filtern der Elemente basierend auf der Suchanfrage
+const filteredItems = computed(() => {
+  return historyItems.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 // Formatieren des Datums
@@ -78,10 +58,7 @@ function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString(); // Gibt nur das Datum zurück
 }
-
-
 </script>
-
 
 <style scoped>
 .container {

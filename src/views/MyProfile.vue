@@ -22,6 +22,12 @@
       </select>
     </div>
 
+    <ul>
+      <li v-for="statistic in dailyImprovements" :key="statistic.exerciseName">
+        {{ statistic.exerciseName }}: {{ statistic.improvement > 0 ? '+' : '' }}{{ statistic.improvement }}
+      </li>
+    </ul>
+
     <div class="input-row">
       <label>BMI:</label>
       <div>{{ bmi }}</div>
@@ -31,13 +37,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import axios from 'axios';
 
 const height = ref<number>(0);
 const weight = ref<number>(0);
 const gender = ref<string>('male');
 const bmi = ref<number>(0);
 const bmiCategory = ref<string>('');
+const dailyImprovements = ref<{ exerciseName: string; improvement: number }[]>([]);
 
 // Berechnung des BMI und der BMI-Kategorie
 const calculateBMI = () => {
@@ -79,6 +87,26 @@ const calculateBMI = () => {
     bmiCategory.value = '';
   }
 };
+
+// Funktion zum Abrufen der täglichen Verbesserungen
+const fetchDailyImprovements = async () => {
+  try {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile/check');
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      dailyImprovements.value = response.data;
+    } else {
+      console.error('Expected array from backend with at least one exercise, got:', response.data);
+    }
+  } catch (error) {
+    console.error('Error fetching daily improvements:', error);
+  }
+};
+
+// Abrufen der täglichen Verbesserungen bei der Komponenten-Montage
+onMounted(() => {
+  fetchDailyImprovements();
+  calculateBMI();
+});
 
 // Überwachung von Änderungen an Größe, Gewicht und Geschlecht
 watch([height, weight, gender], () => {

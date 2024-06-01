@@ -13,8 +13,8 @@ const name_first = 'Vladimir';
 
 <style scoped>
 
-  .greeting {
-    margin-top: 80px;
-  }
+.greeting {
+  margin-top: 80px;
+}
 
 </style>

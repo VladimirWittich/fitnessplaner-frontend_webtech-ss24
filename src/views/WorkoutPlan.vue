@@ -15,21 +15,28 @@
           <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
           <label>Sets:</label>
-          <input type="number" v-model="newExercise.sets" @change="updateRepetitions(newExercise.sets)">
+          <input type="number" v-model="newExercise.sets" placeholder="0">
 
-          <template v-if="displayRepetitionsInput">
-            <div v-for="(repetition, index) in newExercise.repetitions" :key="index">
-              <label>Repetitions {{ index + 1 }}:</label>
-              <input type="number" v-model="newExercise.repetitions[index]">
+          <template v-if="displayRepetitionsInput && displayWeightInput">
+            <div class="row">
+              <template v-for="(repetition, index) in newExercise.repetitions" :key="index">
+                <div class="col-sm-6">
+                  <div class="exercise-row d-flex">
+                    <div class="exercise-label flex-grow-1">Repetitions {{ index + 1 }}:</div>
+                    <div class="exercise-value">
+                      <input type="number" v-model="newExercise.repetitions[index]">
+                    </div>
+                    <div class="exercise-label">Weight:</div>
+                    <div class="exercise-value">
+                      <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </template>
 
-          <template v-if="displayWeightInput">
-            <div v-for="(weight, index) in newExercise.weight" :key="index">
-              <label>Weight {{ index + 1 }}:</label>
-              <input type="number" v-model="newExercise.weight[index]" @input="updateTotalWeight()">
-            </div>
-          </template>
+
 
           <div v-if="isReadyToAddToHistory">
             <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
@@ -54,7 +61,7 @@ import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
   name: '',
-  sets: 0,
+  sets: null,
   repetitions: [],
   weight: [],
   totalWeight: 0.
@@ -150,8 +157,6 @@ onMounted(() => {
       .then((response) => {
         if (Array.isArray(response.data) && response.data.length > 0) {
           // Nehmen Sie an, dass die erste Übung im Array die Daten für newExercise enthält
-          const firstExercise = response.data[0];
-          newExercise.value.sets = firstExercise.sets;
 
         } else {
           console.error('Expected array from backend with at least one exercise, got:', response.data);
@@ -196,5 +201,19 @@ input,
 button {
   margin-bottom: 0px;
 }
-</style>
 
+
+
+.exercise-label {
+  flex-grow: 1; /* Ändern Sie den Flex-Grow-Wert auf 2 oder ein anderes Zahl nach Bedarf */
+}
+
+.exercise-value {
+  width: 55px; /* Justieren Sie den Abstand zwischen Label und Input nach Bedarf */
+}
+
+.exercise-value input {
+  margin-left: 0px; /* Justieren Sie den Abstand zwischen Label und Input nach Bedarf */
+}
+
+</style>
