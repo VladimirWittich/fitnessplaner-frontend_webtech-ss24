@@ -55,6 +55,8 @@ import { ref, watch } from 'vue';
 import axios from 'axios';
 import type { Exercise } from "@/model/model";
 import ExerciseListComponent from "@/components/ExerciseListComponent.vue";
+import { useAuth } from '@okta/okta-vue'
+import type { UserClaims } from '@okta/okta-auth-js'
 
 // Refs für Übungen und neue Übung erstellen
 const exercise = ref<Exercise[]>([]);
@@ -152,11 +154,17 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
+const $auth = useAuth()
+const email = ref('')
+
+
 </script>
 
 <style scoped>
 .container {
-  margin-top: 20px;
+  margin-top: 0px;
+  margin-left: -20px;
+
 }
 
 .bg-light-gray {
@@ -180,7 +188,7 @@ const calculateTotalWeight = (exercise: Exercise) => {
 }
 
 .profile-welcome {
-  margin-top: 80px;
+  margin-top: 30px;
 }
 
 input,
@@ -200,3 +208,4 @@ button {
   margin-left: 0px;
 }
 </style>
+

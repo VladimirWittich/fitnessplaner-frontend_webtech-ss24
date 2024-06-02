@@ -133,17 +133,16 @@ watch([height, weight, gender], () => {
 </script>
 
 <style scoped>
-.container {
-  margin-top: 20px;
-  text-align: left;
-}
+
 .greeting {
-  margin-top: 80px;
-  text-align: left;
+  margin-top: 40px;
+  margin-left: -30px;
 }
 
 .input-row {
   margin-bottom: 10px;
+  margin-left: -15px;
+
 }
 
 .input-row label {

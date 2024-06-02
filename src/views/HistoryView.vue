@@ -2,21 +2,32 @@
   <div class="container">
     <h4 class="profile-welcome">History Vladimir!</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
-    <ul>
-      <li v-if="filteredItems.length === 0">No exercises found</li>
-      <template v-for="(item, index) in filteredItems" :key="index">
-        <template v-if="index === 0 || item.name !== filteredItems[index - 1].name">
-          <li>{{ item.name }}</li>
-        </template>
-        <li>
-          <div>Sets: {{ item.sets }}</div>
-          <div>Repetitions: {{ item.repetitions }}</div>
-          <div>Weight: {{ item.weight }}</div>
-          <div>Total Weight: {{ item.totalWeight }}</div>
-          <div>Date: {{ formatDate(item.createdAt) }}</div>
-        </li>
-      </template>
-    </ul>
+
+    <table v-if="filteredItems.length > 0" class="table">
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>Exercise Name</th>
+        <th>Sets</th>
+        <th>Repetitions</th>
+        <th>Weight (kg)</th>
+        <th>Total Weight (kg)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(item, index) in filteredItems" :key="index">
+        <td>{{ formatDate(item.createdAt) }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.sets }}</td>
+        <td>{{ item.repetitions }}</td>
+        <td>{{ item.weight }}</td>
+        <td>{{ item.totalWeight > 0 ? item.totalWeight : '-' }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div v-else>
+      <p>No exercises found</p>
+    </div>
   </div>
 </template>
 
@@ -56,7 +67,7 @@ const filteredItems = computed(() => {
 // Formatieren des Datums
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString(); // Gibt nur das Datum zurück
+  return date.toISOString().split('T')[0]; // returns YYYY-MM-DD
 }
 </script>
 
@@ -64,5 +75,22 @@ function formatDate(dateString: string): string {
 .container {
   margin-top: 50px;
   margin-left: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 100px;
+}
+
+.table th, .table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
 }
 </style>

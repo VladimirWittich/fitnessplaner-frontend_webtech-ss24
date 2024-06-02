@@ -12,9 +12,8 @@ const name_first = 'Vladimir';
 </template>
 
 <style scoped>
-
 .greeting {
-  margin-top: 80px;
+  margin-top: 40px;
+  margin-left: -15px;
 }
-
 </style>
