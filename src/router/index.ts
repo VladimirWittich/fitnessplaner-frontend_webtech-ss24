@@ -41,9 +41,13 @@ const router = createRouter({
     path: '/login',
     component: LoginView
   },
-
+    {
+      path: '/login/callback',
+      component: LoginCallback
+    },
   {
     path: '/profile',
+    name: 'UserProfil',
     component: UserProfileView,
     meta: {
       requiresAuth: true

@@ -40,6 +40,7 @@ export default defineComponent({
         <img class="navbar-icon" src="@/assets/icon-workoutplanner.png" alt="Workoutplanner Icon" />
       </router-link>
 
+
       <router-link to="/myprofile" class="navbar-brand" >
         <img class="navbar-icon" src="@/assets/icon-myProfile.png" alt="myProfile Icon" />
       </router-link>
@@ -60,6 +61,8 @@ export default defineComponent({
         <div class="navbar-nav">
           <router-link class="nav-link" to="/">Home</router-link>
           <router-link class="nav-link" to="/about">About</router-link>
+          <router-link class="nav-link" to="/profile">UserProfile</router-link>
+
 
           <router-link v-if="!isAuthenticated" to="/login" class="nav-link">Login</router-link>
           <router-link v-if="isAuthenticated" to="/profile" class="nav-link">Profile</router-link>
