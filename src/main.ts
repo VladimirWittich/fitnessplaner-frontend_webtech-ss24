@@ -9,10 +9,12 @@ import OktaSignIn from '@okta/okta-signin-widget'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
+const isLocalhost = window.location.hostname === 'localhost';
+
 const oktaSignIn = new OktaSignIn({
     baseUrl: 'https://dev-35229771.okta.com/',
     clientId: '0oahgn5stel9AdhFq5d7',
-    redirectUri: 'http://localhost:5173/login/callback',
+    redirectUri: isLocalhost ? 'http://localhost:5173/login/callback' : 'https://fitnessplaner-frontend-webtech-ss24-e6t9.onrender.com/login/callback',
     authParams: {
         pkce: true,
         issuer: 'https://dev-35229771.okta.com/oauth2/default',
@@ -27,7 +29,7 @@ const oktaSignIn = new OktaSignIn({
 const oktaAuth = new OktaAuth({
     issuer: 'https://dev-35229771.okta.com/oauth2/default',
     clientId: '0oahgn5stel9AdhFq5d7',
-    redirectUri: window.location.origin + '/login/callback',
+    redirectUri: isLocalhost ? 'http://localhost:5173/login/callback' : 'https://fitnessplaner-frontend-webtech-ss24-e6t9.onrender.com/login/callback',
     scopes: ['openid', 'profile', 'email']
 })
 
