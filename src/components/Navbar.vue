@@ -61,7 +61,8 @@ export default defineComponent({
         <div class="navbar-nav">
           <router-link class="nav-link" to="/">Home</router-link>
           <router-link class="nav-link" to="/about">About</router-link>
-          <router-link class="nav-link" to="/profile">UserProfile</router-link>
+          <router-link class="nav-link" to="/myprofile">myProfile</router-link>
+
 
 
           <router-link v-if="!isAuthenticated" to="/login" class="nav-link">Login</router-link>

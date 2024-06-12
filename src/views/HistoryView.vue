@@ -43,7 +43,7 @@ interface ExerciseItem {
   repetitions: string;
   weight: string;
   totalWeight: number;
-  createdAt: string; // Expecting an ISO string from the backend
+  createdAt: string;
 }
 
 const historyItems = ref<ExerciseItem[]>([]);
@@ -59,7 +59,6 @@ onMounted(async () => {
   }
 });
 
-// Filtern der Elemente basierend auf der Suchanfrage
 const filteredItems = computed(() => {
   return historyItems.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });

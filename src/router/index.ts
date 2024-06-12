@@ -12,47 +12,47 @@ import UserProfileView from "@/views/UserProfileView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: AboutView
-  },
-  {
-    path: '/myprofile',
-    name: 'MyProfile',
-    component: MyProfile
-  },
-  {
-    path: '/workoutplan',
-    name: 'workoutplan',
-    component: WorkoutPlan
-  },
-  {
-    path: '/history',
-    name: 'History',
-    component: HistoryView
-  },
-  {
-    path: '/login',
-    component: LoginView
-  },
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutView
+    },
+    {
+      path: '/myprofile',
+      name: 'MyProfile',
+      component: MyProfile
+    },
+    {
+      path: '/workoutplan',
+      name: 'workoutplan',
+      component: WorkoutPlan
+    },
+    {
+      path: '/history',
+      name: 'History',
+      component: HistoryView
+    },
+    {
+      path: '/login',
+      component: LoginView
+    },
     {
       path: '/login/callback',
       component: LoginCallback
     },
-  {
-    path: '/profile',
-    name: 'UserProfil',
-    component: UserProfileView,
-    meta: {
-      requiresAuth: true
+    {
+      path: '/profile',
+      name: 'UserProfil',
+      component: UserProfileView,
+      meta: {
+        requiresAuth: true
+      }
     }
-  }
 
   ]
 });

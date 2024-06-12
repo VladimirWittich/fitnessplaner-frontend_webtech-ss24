@@ -1,10 +1,12 @@
+<template>
+  <div class="login">
+    <div id="okta-signin-container"></div>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { oktaSignIn } from '../main'
 import { onMounted, onUnmounted, nextTick } from 'vue'
-
-
-
-
+import { oktaSignIn } from '../main'
 
 onMounted(() => {
   nextTick(() => {
@@ -17,19 +19,11 @@ onMounted(() => {
 onUnmounted(() => {
   oktaSignIn.remove()
 })
-
 </script>
-
-<template>
-  <div class="login">
-    <div id="okta-signin-container"></div>
-  </div>
-</template>
 
 <style scoped>
 .login{
   margin-top: 200px;
   margin-left: 0px;
 }
-
 </style>
