@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="greeting">Welcome to your profile, {{ userName }}!</h4>
+    <h4 class="greeting">Welcome to your profile, Vladimir!</h4>
   </div>
 
   <div class="myprofile">
@@ -22,12 +22,6 @@
       </select>
     </div>
 
-    <ul>
-      <li v-for="statistic in dailyImprovements" :key="statistic.exerciseName">
-        {{ statistic.exerciseName }}: {{ statistic.improvement > 0 ? '+' : '' }}{{ statistic.improvement }}
-      </li>
-    </ul>
-
     <div class="input-row">
       <label>BMI:</label>
       <div>{{ bmi }}</div>
@@ -37,16 +31,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 
-const userName = ref<string>('');
 const height = ref<number>(0);
 const weight = ref<number>(0);
 const gender = ref<string>('male');
 const bmi = ref<number>(0);
 const bmiCategory = ref<string>('');
-const dailyImprovements = ref<{ exerciseName: string; improvement: number }[]>([]);
+
+// Methode zum Abrufen der Personendaten vom Backend
+const fetchPersonData = async () => {
+  try {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile');
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      const personData = response.data[0];
+      height.value = personData.height;
+      weight.value = personData.weight;
+      gender.value = personData.gender;
+      calculateBMI(); // BMI neu berechnen basierend auf den erhaltenen Profildaten
+    } else {
+      console.error('Expected array from backend with at least one user profile, got:', response.data);
+    }
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+  }
+};
 
 // Berechnung des BMI und der BMI-Kategorie
 const calculateBMI = () => {
@@ -89,60 +99,29 @@ const calculateBMI = () => {
   }
 };
 
-// Funktion zum Abrufen der täglichen Verbesserungen
-const fetchDailyImprovements = async () => {
-  try {
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile/check');
-    if (Array.isArray(response.data) && response.data.length > 0) {
-      dailyImprovements.value = response.data;
-    } else {
-      console.error('Expected array from backend with at least one exercise, got:', response.data);
-    }
-  } catch (error) {
-    console.error('Error fetching daily improvements:', error);
-  }
-};
-
-// Abrufen der Benutzerprofil-Daten beim Laden der Komponente
+// Abrufen der Personendaten bei der Komponenten-Montage
 onMounted(() => {
-  axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile')
-      .then((response) => {
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          const userProfile = response.data[0]; // Annahme: Die Daten für das erste Benutzerprofil im Array
-          userName.value = userProfile.name;
-          height.value = userProfile.height;
-          weight.value = userProfile.weight;
-          gender.value = userProfile.gender;
-          calculateBMI(); // BMI neu berechnen basierend auf den erhaltenen Profildaten
-        } else {
-          console.error('Expected array from backend with at least one user profile, got:', response.data);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching user profile:', error);
-      });
-
-  fetchDailyImprovements();
+  fetchPersonData();
 });
 
 // Überwachung von Änderungen an Größe, Gewicht und Geschlecht
 watch([height, weight, gender], () => {
   calculateBMI();
 });
-
 </script>
 
 <style scoped>
-
+.container {
+  margin-top: 20px;
+  text-align: left;
+}
 .greeting {
-  margin-top: 40px;
-  margin-left: -30px;
+  margin-top: 80px;
+  text-align: left;
 }
 
 .input-row {
   margin-bottom: 10px;
-  margin-left: -15px;
-
 }
 
 .input-row label {

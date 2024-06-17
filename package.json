@@ -12,7 +12,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "serve": "vue-cli-service serve --host localhost --port 3000"
   },
   "dependencies": {
     "@okta/okta-auth-js": "^7.7.0",
@@ -35,6 +36,7 @@
     "@types/node": "^20.12.12",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/test-utils": "^2.4.5",

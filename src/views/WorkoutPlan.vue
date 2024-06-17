@@ -154,8 +154,6 @@ const calculateTotalWeight = (exercise: Exercise) => {
   return totalWeight;
 };
 
-const $auth = useAuth()
-const email = ref('')
 
 
 </script>
