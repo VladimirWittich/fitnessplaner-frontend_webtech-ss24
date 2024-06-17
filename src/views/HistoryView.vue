@@ -16,7 +16,7 @@
       </thead>
       <tbody>
       <tr v-for="(item, index) in filteredItems" :key="index">
-        <td>{{ formatDate(item.createdAt) }}</td>
+
         <td>{{ item.name }}</td>
         <td>{{ item.sets }}</td>
         <td>{{ item.repetitions }}</td>
@@ -63,11 +63,7 @@ const filteredItems = computed(() => {
   return historyItems.value.filter(item => item.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
-// Formatieren des Datums
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toISOString().split('T')[0]; // returns YYYY-MM-DD
-}
+
 </script>
 
 <style scoped>
