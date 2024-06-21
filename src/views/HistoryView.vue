@@ -52,7 +52,7 @@ const searchQuery = ref<string>('');
 // Abrufen der Daten beim Komponentenstart
 onMounted(async () => {
   try {
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/all');
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/history');
     historyItems.value = response.data;
   } catch (error) {
     console.error('Failed to fetch history items:', error);

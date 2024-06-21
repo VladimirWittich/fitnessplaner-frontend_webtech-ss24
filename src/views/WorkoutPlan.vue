@@ -1,14 +1,12 @@
 <template>
   <div class="container">
-    <h4 class="profile-welcome">You can do it Vladimir!</h4>
+    <h4 class="profile-welcome">You can do it, {{ userName }}!</h4>
     <div>
       <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
     </div>
 
     <div class="exercise-list-container">
-      <!-- ExerciseListComponent v-model="exercise" /> -->
-      <!-- Button to hide exercise, assuming you handle this separately -->
-      <button class="btn btn-primary" v-if="exercise && exercise.length > 0" @click="deleteExercise(0)">Hide Exercise</button>
+
 
       <div class="new-exercise-form">
         <label>Exercise name:</label>
@@ -18,7 +16,7 @@
         <input type="number" v-model="newExercise.sets" @input="updateRepetitions(newExercise.sets)" placeholder="0">
 
         <!-- Show only if Sets > 0 -->
-        <template v-if="displayRepetitionsInput && displayWeightInput">
+        <template v-if="newExercise.sets > 0">
           <div class="row">
             <template v-for="(repetition, index) in newExercise.repetitions" :key="index">
               <div class="col-sm-6">
@@ -40,7 +38,7 @@
         <!-- Email input field added -->
         <div class="email-input">
           <label>Email:</label>
-          <input type="email" v-model="newExercise.owner" placeholder="Your email">
+          <input type="email" v-model="email" placeholder="Your email">
         </div>
 
         <!-- Buttons: Add to my History and Cancel -->
@@ -53,7 +51,25 @@
         <button class="btn btn-primary" @click="showInputs">Add new exercise</button>
         <!-- Router link to history -->
         <router-link to="/history" class="btn btn-primary">Go to history</router-link>
+        <button class="btn btn-primary" v-if="exercise.length > 0" @click="toggleExerciseList">
+          {{ showExerciseList ? 'Hide Exercise' : 'Show Exercise' }}
+        </button>
+
       </div>
+    </div>
+
+    <!-- Exercise list -->
+    <div v-if="showExerciseList" class="mt-3">
+      <h5>Exercise List:</h5>
+      <ul>
+        <li v-for="(ex, index) in exercise" :key="index">
+          <p><strong>Name:</strong> {{ ex.name }}</p>
+          <p><strong>Sets:</strong> {{ ex.sets }}</p>
+          <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
+          <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
+          <button class="btn btn-sm btn-danger" @click="deleteExercise(index)">Delete</button>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -61,9 +77,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import type { Exercise } from "@/model/model";
 import { useAuth } from '@okta/okta-vue';
-import type { UserClaims } from '@okta/okta-auth-js';
+import type { Exercise } from "@/model/model";
+import {CustomUserClaim} from "@okta/okta-auth-js";
 
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
@@ -74,12 +90,12 @@ const newExercise = ref<Exercise>({
   totalWeight: 0,
   owner: ''
 });
-const displayRepetitionsInput = ref(false);
-const displayWeightInput = ref(false);
-const email = ref('');
+const email = ref<string>('');
+const showExerciseList = ref(true);
+const claims = ref<{ claim: string; value: CustomUserClaim | CustomUserClaim[] }[]>([]);
+const userName = ref('');
 
 const $auth = useAuth();
-const claims = ref<{ claim: string; value: UserClaims[keyof UserClaims] }[]>([]);
 
 onMounted(async () => {
   try {
@@ -92,32 +108,44 @@ onMounted(async () => {
     console.error('Failed to fetch user claims:', error);
   }
 
-  // Additional code to fetch exercises, if needed
-  // Fetching initial data, if needed
-  // Example:
+  // Fetch initial exercise data if needed
+  fetchInitialExerciseData();
+});
 
+onMounted(async () => {
+  try {
+    const userClaims = await $auth.getUser();
+    for (const claim in userClaims) {
+      claims.value.push({
+        claim,
+        value: userClaims[claim]
+      });
+    }
+    if (userClaims.given_name) {
+      userName.value = userClaims.given_name;
+    }
+  } catch (error) {
+    console.error('Failed to fetch user claims:', error);
+  }
+});
+
+const fetchInitialExerciseData = async () => {
   try {
     const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan');
     if (Array.isArray(response.data) && response.data.length > 0) {
-      const firstExercise = response.data[0];
-      newExercise.value.name = firstExercise.name;
-      newExercise.value.sets = firstExercise.sets;
-      newExercise.value.repetitions = firstExercise.repetitions || [];
-      newExercise.value.weight = firstExercise.weight || [];
-      newExercise.value.owner = firstExercise.owner;
-      displayRepetitionsInput.value = firstExercise.sets > 0;
-      displayWeightInput.value = firstExercise.sets > 0;
+      exercise.value = response.data;
     } else {
       console.error('Expected array from backend with at least one exercise, got:', response.data);
     }
   } catch (error) {
     console.error('Failed to fetch exercise data:', error);
   }
-});
+};
 
 const showInputs = () => {
-  displayRepetitionsInput.value = true;
-  displayWeightInput.value = true;
+  // Toggle display of repetitions and weight inputs
+  newExercise.value.repetitions = Array.from({ length: newExercise.value.sets }, () => 0);
+  newExercise.value.weight = Array.from({ length: newExercise.value.sets }, () => 0);
 };
 
 const addToHistory = async () => {
@@ -149,10 +177,8 @@ const resetForm = () => {
     repetitions: [],
     weight: [],
     totalWeight: 0,
-    owner: email.value // Reset email to current user's email
+    owner: email.value // Set to current email value
   };
-  displayRepetitionsInput.value = false;
-  displayWeightInput.value = false;
 };
 
 const cancel = () => {
@@ -160,9 +186,7 @@ const cancel = () => {
 };
 
 const updateTotalWeight = () => {
-  if (newExercise.value) {
-    newExercise.value.totalWeight = calculateTotalWeight(newExercise.value);
-  }
+  newExercise.value.totalWeight = calculateTotalWeight(newExercise.value);
 };
 
 const calculateTotalWeight = (exercise: Exercise) => {
@@ -175,10 +199,27 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 const updateRepetitions = (value: number) => {
   if (value >= 0) {
-    newExercise.value.repetitions = new Array(value).fill(null);
-    newExercise.value.weight = new Array(value).fill(null);
+    newExercise.value.repetitions = Array.from({ length: value }, () => 0); // Initialize with 0
+    newExercise.value.weight = Array.from({ length: value }, () => 0); // Initialize with 0
   }
 };
+
+const deleteExercise = async (index: number) => {
+  if (exercise.value.length > index) {
+    try {
+      const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + '/workoutplan/' + exercise.value[index]._id);
+      console.log('Deleted exercise:', response);
+      exercise.value.splice(index, 1);
+    } catch (error) {
+      console.error('Failed to delete exercise:', error);
+    }
+  }
+};
+
+const toggleExerciseList = () => {
+  showExerciseList.value = !showExerciseList.value;
+};
+
 </script>
 
 <style scoped>
