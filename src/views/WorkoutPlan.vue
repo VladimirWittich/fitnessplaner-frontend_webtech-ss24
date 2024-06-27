@@ -1,75 +1,77 @@
 <template>
   <div class="container">
-    <h4 class="profile-welcome">You can do it, {{ userName }}!</h4>
-    <div>
-      <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
-    </div>
+    <div v-if="isAuthenticated">
+      <h4 class="profile-welcome">You can do it, {{ userName }}!</h4>
+      <div>
+        <h6 class="add-progress" style="text-align: left;">Add your progress for today!</h6>
+      </div>
 
-    <div class="exercise-list-container">
+      <div class="exercise-list-container">
+        <div class="new-exercise-form">
+          <label>Exercise name:</label>
+          <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
 
+          <label>Sets:</label>
+          <input type="number" v-model="newExercise.sets" @input="updateRepetitions(newExercise.sets)" placeholder="0">
 
-      <div class="new-exercise-form">
-        <label>Exercise name:</label>
-        <input type="text" v-model="newExercise.name" placeholder="Type in exercise name">
-
-        <label>Sets:</label>
-        <input type="number" v-model="newExercise.sets" @input="updateRepetitions(newExercise.sets)" placeholder="0">
-
-        <!-- Show only if Sets > 0 -->
-        <template v-if="newExercise.sets > 0">
-          <div class="row">
-            <template v-for="(repetition, index) in newExercise.repetitions" :key="index">
-              <div class="col-sm-6">
-                <div class="exercise-row d-flex">
-                  <div class="exercise-label flex-grow-1">Repetitions {{ index + 1 }}:</div>
-                  <div class="exercise-value">
-                    <input type="number" v-model="newExercise.repetitions[index]" :placeholder="'0'">
-                  </div>
-                  <div class="exercise-label">Weight:</div>
-                  <div class="exercise-value">
-                    <input type="number" v-model="newExercise.weight[index]" :placeholder="'0'" @input="updateTotalWeight()">
+          <!-- Show only if Sets > 0 -->
+          <template v-if="newExercise.sets > 0">
+            <div class="row">
+              <template v-for="(repetition, index) in newExercise.repetitions" :key="index">
+                <div class="col-sm-6">
+                  <div class="exercise-row d-flex">
+                    <div class="exercise-label flex-grow-1">Repetitions {{ index + 1 }}:</div>
+                    <div class="exercise-value">
+                      <input type="number" v-model="newExercise.repetitions[index]" :placeholder="'0'">
+                    </div>
+                    <div class="exercise-label">Weight:</div>
+                    <div class="exercise-value">
+                      <input type="number" v-model="newExercise.weight[index]" :placeholder="'0'" @input="updateTotalWeight()">
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
+              </template>
+            </div>
+          </template>
+
+          <!-- Email input field added -->
+          <div class="email-input">
+            <label>Email:</label>
+            <input type="email" v-model="email" placeholder="Your email">
           </div>
-        </template>
 
-        <!-- Email input field added -->
-        <div class="email-input">
-          <label>Email:</label>
-          <input type="email" v-model="email" placeholder="Your email">
+          <!-- Buttons: Add to my History and Cancel -->
+          <div class="mt-3">
+            <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
+            <button class="btn btn-danger" @click="cancel">Cancel</button>
+          </div>
+
+          <!-- Button to show inputs -->
+          <button class="btn btn-primary" @click="showInputs">Add new exercise</button>
+          <!-- Router link to history -->
+          <router-link to="/history" class="btn btn-primary">Go to history</router-link>
+          <button class="btn btn-primary" v-if="exercise.length > 0" @click="toggleExerciseList">
+            {{ showExerciseList ? 'Hide Exercise' : 'Show Exercise' }}
+          </button>
         </div>
+      </div>
 
-        <!-- Buttons: Add to my History and Cancel -->
-        <div class="mt-3">
-          <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
-          <button class="btn btn-danger" @click="cancel">Cancel</button>
-        </div>
-
-        <!-- Button to show inputs -->
-        <button class="btn btn-primary" @click="showInputs">Add new exercise</button>
-        <!-- Router link to history -->
-        <router-link to="/history" class="btn btn-primary">Go to history</router-link>
-        <button class="btn btn-primary" v-if="exercise.length > 0" @click="toggleExerciseList">
-          {{ showExerciseList ? 'Hide Exercise' : 'Show Exercise' }}
-        </button>
-
+      <!-- Exercise list -->
+      <div v-if="showExerciseList" class="mt-3">
+        <h5>Exercise List:</h5>
+        <ul>
+          <li v-for="(ex, index) in exercise" :key="index">
+            <p><strong>Name:</strong> {{ ex.name }}</p>
+            <p><strong>Sets:</strong> {{ ex.sets }}</p>
+            <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
+            <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
+            <button class="btn btn-sm btn-danger" @click="deleteExercise(index)">Delete</button>
+          </li>
+        </ul>
       </div>
     </div>
-
-    <!-- Exercise list -->
-    <div v-if="showExerciseList" class="mt-3">
-      <h5>Exercise List:</h5>
-      <ul>
-        <li v-for="(ex, index) in exercise" :key="index">
-          <p><strong>Name:</strong> {{ ex.name }}</p>
-          <p><strong>Sets:</strong> {{ ex.sets }}</p>
-          <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
-          <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
-          <button class="btn btn-sm btn-danger" @click="deleteExercise(index)">Delete</button>
-        </li>
-      </ul>
+    <div v-else>
+      <h4 class="profile-welcome">Please log in to add your workoutplan.</h4>
     </div>
   </div>
 </template>
@@ -79,7 +81,6 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuth } from '@okta/okta-vue';
 import type { Exercise } from "@/model/model";
-import {CustomUserClaim} from "@okta/okta-auth-js";
 
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
@@ -92,42 +93,10 @@ const newExercise = ref<Exercise>({
 });
 const email = ref<string>('');
 const showExerciseList = ref(true);
-const claims = ref<{ claim: string; value: CustomUserClaim | CustomUserClaim[] }[]>([]);
 const userName = ref('');
+const isAuthenticated = ref(false);
 
 const $auth = useAuth();
-
-onMounted(async () => {
-  try {
-    const userClaims = await $auth.getUser();
-    if (userClaims.email) {
-      email.value = userClaims.email;
-      newExercise.value.owner = userClaims.email; // Set email in newExercise
-    }
-  } catch (error) {
-    console.error('Failed to fetch user claims:', error);
-  }
-
-  // Fetch initial exercise data if needed
-  fetchInitialExerciseData();
-});
-
-onMounted(async () => {
-  try {
-    const userClaims = await $auth.getUser();
-    for (const claim in userClaims) {
-      claims.value.push({
-        claim,
-        value: userClaims[claim]
-      });
-    }
-    if (userClaims.given_name) {
-      userName.value = userClaims.given_name;
-    }
-  } catch (error) {
-    console.error('Failed to fetch user claims:', error);
-  }
-});
 
 const fetchInitialExerciseData = async () => {
   try {
@@ -142,6 +111,27 @@ const fetchInitialExerciseData = async () => {
   }
 };
 
+onMounted(async () => {
+  try {
+    isAuthenticated.value = await $auth.isAuthenticated();
+    if (isAuthenticated.value) {
+      const userClaims = await $auth.getUser();
+      if (userClaims.email) {
+        email.value = userClaims.email;
+        newExercise.value.owner = userClaims.email; // Set email in newExercise
+      }
+      if (userClaims.given_name) {
+        userName.value = userClaims.given_name;
+      }
+
+      // Fetch initial exercise data if authenticated
+      fetchInitialExerciseData();
+    }
+  } catch (error) {
+    console.error('Failed to fetch user claims:', error);
+  }
+});
+
 const showInputs = () => {
   // Toggle display of repetitions and weight inputs
   newExercise.value.repetitions = Array.from({ length: newExercise.value.sets }, () => 0);
@@ -155,13 +145,13 @@ const addToHistory = async () => {
   }
 
   try {
-    console.log('Adding exercise:', newExercise.value);
+    const token = await $auth.getAccessToken();
     const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/workoutplan', newExercise.value, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
     });
-    console.log('Backend response:', response);
     exercise.value.push(response.data);
     resetForm();
   } catch (error) {

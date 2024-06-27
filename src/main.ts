@@ -13,7 +13,7 @@ const isLocalhost = window.location.hostname === 'localhost';
 
 const oktaSignIn = new OktaSignIn({
     baseUrl: 'https://dev-50314961.okta.com',
-    clientId: '0oahnnohukLTsAD3h5d7',
+    clientId: '0oai026m0zU1OtlHO5d7',
     redirectUri: 'http://localhost:5173/login/callback',
     authParams: {
         pkce: true,
@@ -28,7 +28,7 @@ const oktaSignIn = new OktaSignIn({
 
 const oktaAuth = new OktaAuth({
     issuer: 'https://dev-50314961.okta.com/oauth2/default',
-    clientId: '0oahnnohukLTsAD3h5d7',
+    clientId: '0oai026m0zU1OtlHO5d7',
     redirectUri: isLocalhost ? 'http://localhost:5173/login/callback' : 'https://fitnessplaner-frontend-webtech-ss24-e6t9.onrender.com/login/callback',
     scopes: ['openid', 'profile', 'email']
 })

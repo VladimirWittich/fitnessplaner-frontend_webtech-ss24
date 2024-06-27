@@ -33,6 +33,8 @@ onMounted(async () => {
   await checkAuthentication()
   auth.authStateManager.subscribe(checkAuthentication)
 })
+
+
 </script>
 
 <template>

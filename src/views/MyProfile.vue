@@ -1,64 +1,77 @@
 <template>
-  <div class="container">
+  <div v-if="isAuthenticated" class="container">
     <h4 class="greeting">Welcome to your profile, Vladimir!</h4>
+
+    <div class="myprofile">
+      <div class="input-row">
+        <label for="height">Height (cm):</label>
+        <input type="number" id="height" v-model="height" @input="calculateBMI">
+      </div>
+
+      <div class="input-row">
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" v-model="weight" @input="calculateBMI">
+      </div>
+
+      <div class="input-row">
+        <label for="gender">Gender:</label>
+        <select id="gender" v-model="gender" @change="calculateBMI">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>BMI:</label>
+        <div>{{ bmi }}</div>
+        <div v-if="bmiCategory">BMI Category: {{ bmiCategory }}</div>
+      </div>
+    </div>
   </div>
-
-  <div class="myprofile">
-    <div class="input-row">
-      <label for="height">Height (cm):</label>
-      <input type="number" id="height" v-model="height" @input="calculateBMI">
-    </div>
-
-    <div class="input-row">
-      <label for="weight">Weight (kg):</label>
-      <input type="number" id="weight" v-model="weight" @input="calculateBMI">
-    </div>
-
-    <div class="input-row">
-      <label for="gender">Gender:</label>
-      <select id="gender" v-model="gender" @change="calculateBMI">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-    </div>
-
-    <div class="input-row">
-      <label>BMI:</label>
-      <div>{{ bmi }}</div>
-      <div v-if="bmiCategory">BMI Category: {{ bmiCategory }}</div>
-    </div>
+  <div v-else class="container">
+    <h4 class="greeting">Please log in to view your profile.</h4>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
+import { useAuth } from '@okta/okta-vue';
 
 const height = ref<number>(0);
 const weight = ref<number>(0);
 const gender = ref<string>('male');
 const bmi = ref<number>(0);
 const bmiCategory = ref<string>('');
+const isAuthenticated = ref(false);
+const $auth = useAuth();
 
-// Methode zum Abrufen der Personendaten vom Backend
 const fetchPersonData = async () => {
   try {
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile');
-    if (Array.isArray(response.data) && response.data.length > 0) {
-      const personData = response.data[0];
-      height.value = personData.height;
-      weight.value = personData.weight;
-      gender.value = personData.gender;
-      calculateBMI(); // BMI neu berechnen basierend auf den erhaltenen Profildaten
+    const token = await $auth.getAccessToken();
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.data && response.data.length > 0) { // sicherstellen, dass Daten vorhanden sind
+      const personData = response.data[0]; // Da das Backend ein Array von Objekten zurückgibt, auf das erste Objekt zugreifen
+      console.log('Received person data:', personData);
+      if (personData.height) height.value = personData.height;
+      if (personData.weight) weight.value = personData.weight;
+      if (personData.gender) gender.value = personData.gender;
+      calculateBMI();
     } else {
-      console.error('Expected array from backend with at least one user profile, got:', response.data);
+      console.error('Empty response or invalid data format:', response.data);
     }
   } catch (error) {
     console.error('Error fetching user profile:', error);
   }
 };
 
-// Berechnung des BMI und der BMI-Kategorie
+
 const calculateBMI = () => {
   if (height.value > 0 && weight.value > 0) {
     const heightInMeter = height.value / 100;
@@ -99,12 +112,13 @@ const calculateBMI = () => {
   }
 };
 
-// Abrufen der Personendaten bei der Komponenten-Montage
-onMounted(() => {
-  fetchPersonData();
+onMounted(async () => {
+  isAuthenticated.value = await $auth.isAuthenticated();
+  if (isAuthenticated.value) {
+    fetchPersonData();
+  }
 });
 
-// Überwachung von Änderungen an Größe, Gewicht und Geschlecht
 watch([height, weight, gender], () => {
   calculateBMI();
 });
@@ -115,6 +129,7 @@ watch([height, weight, gender], () => {
   margin-top: 20px;
   text-align: left;
 }
+
 .greeting {
   margin-top: 80px;
   text-align: left;
