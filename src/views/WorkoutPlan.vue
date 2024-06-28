@@ -197,7 +197,7 @@ const updateRepetitions = (value: number) => {
 const deleteExercise = async (index: number) => {
   if (exercise.value.length > index) {
     try {
-      const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + '/workoutplan/' + exercise.value[index]._id);
+      const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + '/workoutplan');
       console.log('Deleted exercise:', response);
       exercise.value.splice(index, 1);
     } catch (error) {

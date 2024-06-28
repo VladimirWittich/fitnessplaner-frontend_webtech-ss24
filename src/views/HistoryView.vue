@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="profile-welcome">History Vladimir!</h4>
+    <h4 class="profile-welcome">History {{ userName }}!</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
 
     <table v-if="filteredItems.length > 0" class="table">
@@ -52,38 +52,19 @@ const searchQuery = ref<string>('');
 const router = useRouter();
 const isAuthenticated = ref(false);
 const $auth = useAuth();
+let userName = ref('');
 
 const fetchHistoryData = async () => {
   try {
     const token = await $auth.getAccessToken();
-    if (!token) {
-      console.error('Authorization token not available.');
-      router.push('/login');
-      return;
-    }
-
-    isAuthenticated.value = await $auth.isAuthenticated();
-    if (!isAuthenticated.value) {
-      router.push('/login');
-      return;
-    }
-
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/history', {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/history', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
-    console.log('API response:', response.data);
-    historyItems.value = Array.isArray(response.data) ? response.data : [];
-
+    historyItems.value = response.data; // assuming response.data is an array of ExerciseItem
   } catch (error) {
-    console.error('Failed to fetch history items:', error);
-    if (error.response && error.response.status === 401) {
-      router.push('/login');
-    } else {
-      console.error('Error fetching history:', error);
-    }
+    console.error('Failed to fetch history data:', error);
   }
 };
 
@@ -94,8 +75,20 @@ const filteredItems = computed(() => {
   );
 });
 
-onMounted(fetchHistoryData);
-
+onMounted(async () => {
+  try {
+    isAuthenticated.value = await $auth.isAuthenticated();
+    if (isAuthenticated.value) {
+      const userClaims = await $auth.getUser();
+      if (userClaims.given_name) {
+        userName.value = userClaims.given_name;
+      }
+      fetchHistoryData(); // Fetch history data if authenticated
+    }
+  } catch (error) {
+    console.error('Failed to fetch user claims or history data:', error);
+  }
+});
 </script>
 
 <style scoped>
