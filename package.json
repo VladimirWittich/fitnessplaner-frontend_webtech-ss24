@@ -16,6 +16,7 @@
     "serve": "vue-cli-service serve --host localhost --port 3000"
   },
   "dependencies": {
+    "@auth0/auth0-vue": "^2.3.3",
     "@okta/okta-auth-js": "^7.7.0",
     "@okta/okta-signin-widget": "^7.19.3",
     "@okta/okta-vue": "^5.7.0",
