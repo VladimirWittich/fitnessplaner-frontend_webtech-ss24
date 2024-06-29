@@ -57,7 +57,7 @@ let userName = ref('');
 const fetchHistoryData = async () => {
   try {
     const token = await $auth.getAccessToken();
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/history', {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/all', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -84,11 +84,16 @@ onMounted(async () => {
         userName.value = userClaims.given_name;
       }
       fetchHistoryData(); // Fetch history data if authenticated
+
+      // Additional logic to fetch workout plan data
+      const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/all');
+      historyItems.value = response.data;
     }
   } catch (error) {
     console.error('Failed to fetch user claims or history data:', error);
   }
 });
+
 </script>
 
 <style scoped>

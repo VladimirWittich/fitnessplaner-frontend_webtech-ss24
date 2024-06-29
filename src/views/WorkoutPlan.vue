@@ -100,7 +100,11 @@ const $auth = useAuth();
 
 const fetchInitialExerciseData = async () => {
   try {
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan');
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan', {
+      headers: {
+        Authorization: 'Bearer ' + $auth.getAccessToken()
+      }
+    });
     if (Array.isArray(response.data) && response.data.length > 0) {
       exercise.value = response.data;
     } else {
