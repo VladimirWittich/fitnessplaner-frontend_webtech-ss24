@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="profile-welcome">Your overview, {{ userName }}!</h4>
+    <h4 class="profile-welcome">Your overview</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
 
     <div v-if="isLoading">
@@ -9,12 +9,12 @@
     <table v-else-if="filteredItems.length > 0" class="table">
       <thead>
       <tr>
-        <th>Date</th>
-        <th>Exercise Name</th>
-        <th>Sets</th>
-        <th>Repetitions</th>
-        <th>Weight (kg)</th>
-        <th>Total Weight (kg)</th>
+        <th class="column-date">Date</th>
+        <th class="column-name">Exercise Name</th>
+        <th class="column-sets">Sets</th>
+        <th class="column-repetitions">Repetitions</th>
+        <th class="column-weight">Weight (kg)</th>
+        <th class="column-total-weight">Total Weight (kg)</th>
       </tr>
       </thead>
       <tbody>
@@ -24,7 +24,9 @@
         <td>{{ item.sets }}</td>
         <td>{{ item.repetitions }}</td>
         <td>{{ item.weight }}</td>
-        <td>{{ item.totalWeight > 0 ? item.totalWeight : '-' }}</td>
+        <td>
+          {{ item.totalWeight > 0 ? item.totalWeight.toLocaleString('de-DE', { minimumFractionDigits: 2 }) : '-' }}
+        </td>
       </tr>
       </tbody>
     </table>
@@ -129,6 +131,8 @@ const showNoResultsMessage = computed(() => {
 .table {
   margin-top: 40px;
   margin-left: 0px;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .table th,
@@ -136,9 +140,34 @@ const showNoResultsMessage = computed(() => {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  white-space: nowrap; /* Verhindert Textumbruch */
 }
 
 .table th {
   background-color: #f2f2f2;
+}
+
+.column-date {
+  width: 150px !important;
+}
+
+.column-name {
+  width: 200px !important;
+}
+
+.column-sets {
+  width: 50px !important;
+}
+
+.column-repetitions {
+  width: 100px !important;
+}
+
+.column-weight {
+  width: 80px !important;
+}
+
+.column-total-weight {
+  width: 100px !important;
 }
 </style>

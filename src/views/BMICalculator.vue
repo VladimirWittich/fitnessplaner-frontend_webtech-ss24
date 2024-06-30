@@ -162,7 +162,7 @@ margin-left: -15px;
 
 .greeting {
   margin-top: 40px;
-  margin-left: -15px;
+  margin-left: -20px;
 }
 
 .input-row {

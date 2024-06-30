@@ -40,14 +40,15 @@ export default defineComponent({
         <img class="navbar-icon" src="@/assets/icon-workoutplanner.png" alt="Workoutplanner Icon" />
       </router-link>
 
+      <router-link to="/bmicalculator" class="navbar-brand" >
+        <img class="navbar-icon" src="@/assets/icon-bmicalculator.png" alt="myProfile Icon" />
+      </router-link>
 
       <router-link to="/profile" class="navbar-brand" >
         <img class="navbar-icon" src="@/assets/icon-myProfile.png" alt="myProfile Icon" />
       </router-link>
 
-      <router-link to="/bmicalculator" class="navbar-brand" >
-        <img class="navbar-icon" src="@/assets/icon-bmicalculator.png" alt="myProfile Icon" />
-      </router-link>
+
 
 
 

@@ -56,7 +56,7 @@
             <p><strong>Sets:</strong> {{ ex.sets }}</p>
             <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
             <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
-            <p><strong>Total Weight:</strong> {{ ex.totalWeight.toFixed(2) }}</p>
+            <p><strong>Total Weight:</strong> {{ ex.totalWeight.toFixed(2)}}<light> kg</light> </p>
           </li>
         </ul>
       </div>
