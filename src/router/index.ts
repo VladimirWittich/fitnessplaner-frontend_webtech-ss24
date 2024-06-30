@@ -9,7 +9,8 @@ import BMICalculator from "@/views/BMICalculator.vue";
 
 // Router-Definition
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
+  linkActiveClass: 'active',
   routes: [
     {
       path: '/',
