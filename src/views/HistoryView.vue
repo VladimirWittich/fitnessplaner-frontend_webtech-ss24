@@ -3,7 +3,10 @@
     <h4 class="profile-welcome">History {{ userName }}!</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
 
-    <table v-if="filteredItems.length > 0" class="table">
+    <div v-if="isLoading">
+      <p>Loading...</p>
+    </div>
+    <table v-else-if="filteredItems.length > 0" class="table">
       <thead>
       <tr>
         <th>Date</th>
@@ -25,7 +28,7 @@
       </tr>
       </tbody>
     </table>
-    <div v-else>
+    <div v-else-if="showNoResultsMessage">
       <p>No exercises found</p>
     </div>
   </div>
@@ -51,20 +54,26 @@ const historyItems = ref<ExerciseItem[]>([]);
 const searchQuery = ref<string>('');
 const router = useRouter();
 const isAuthenticated = ref(false);
+const isLoading = ref(true); // Start with loading state true
 const $auth = useAuth();
 let userName = ref('');
+let timer: number | null = null;
+const TIMEOUT_DURATION = 10000; // 10 seconds
 
 const fetchHistoryData = async () => {
   try {
     const token = await $auth.getAccessToken();
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/all', {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/all', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
     historyItems.value = response.data; // assuming response.data is an array of ExerciseItem
+    isLoading.value = false; // Set loading state to false after fetching data
+    clearTimeout(timer); // Clear timeout when data is loaded
   } catch (error) {
     console.error('Failed to fetch history data:', error);
+    isLoading.value = false; // Set loading state to false on error
   }
 };
 
@@ -75,6 +84,14 @@ const filteredItems = computed(() => {
   );
 });
 
+const startTimeoutTimer = () => {
+  timer = window.setTimeout(() => {
+    isLoading.value = false; // Set loading state to false after timeout
+    clearTimeout(timer); // Clear timeout
+    timer = null;
+  }, TIMEOUT_DURATION);
+};
+
 onMounted(async () => {
   try {
     isAuthenticated.value = await $auth.isAuthenticated();
@@ -84,29 +101,34 @@ onMounted(async () => {
         userName.value = userClaims.given_name;
       }
       fetchHistoryData(); // Fetch history data if authenticated
+      startTimeoutTimer(); // Start timeout timer
 
       // Additional logic to fetch workout plan data
       const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/all');
       historyItems.value = response.data;
+      clearTimeout(timer); // Clear timeout if data fetch finishes before timeout
     }
   } catch (error) {
     console.error('Failed to fetch user claims or history data:', error);
+    isLoading.value = false; // Set loading state to false on error
   }
+});
+
+const showNoResultsMessage = computed(() => {
+  return !isLoading.value && filteredItems.value.length === 0 && !timer;
 });
 
 </script>
 
 <style scoped>
 .container {
-  margin-top: 50px;
-  margin-left: auto;
+  margin-top: 40px;
+  margin-left: -15px;
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  margin-left: 100px;
+  margin-top: 40px;
+  margin-left: 0px;
 }
 
 .table th,

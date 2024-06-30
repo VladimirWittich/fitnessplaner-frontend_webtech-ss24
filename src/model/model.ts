@@ -4,6 +4,7 @@ export interface Exercise {
     repetitions: number[];
     weight: number[];
     totalWeight: number;
-    owner: string; // Neue Eigenschaft ownerEmail hinzugefügt
+    owner: string;
+    isVisible: boolean;
 
 }

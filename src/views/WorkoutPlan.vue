@@ -34,30 +34,23 @@
             </div>
           </template>
 
-          <!-- Email input field added -->
-          <div class="email-input">
-            <label>Email:</label>
-            <input type="email" v-model="email" placeholder="Your email">
-          </div>
-
           <!-- Buttons: Add to my History and Cancel -->
           <div class="mt-3">
             <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
             <button class="btn btn-danger" @click="cancel">Cancel</button>
           </div>
 
-          <!-- Button to show inputs -->
-          <button class="btn btn-primary" @click="showInputs">Add new exercise</button>
+
           <!-- Router link to history -->
           <router-link to="/history" class="btn btn-primary">Go to history</router-link>
-          <button class="btn btn-primary" v-if="exercise.length > 0" @click="toggleExerciseList">
-            {{ showExerciseList ? 'Hide Exercise' : 'Show Exercise' }}
+          <button class="btn btn-primary" v-if="exercise.length > 0" @click="clearExerciseList">
+            Clear Exercise List
           </button>
         </div>
       </div>
 
       <!-- Exercise list -->
-      <div v-if="showExerciseList" class="mt-3">
+      <div v-if="exercise.length > 0" class="mt-3">
         <h5>Exercise List:</h5>
         <ul>
           <li v-for="(ex, index) in exercise" :key="index">
@@ -65,13 +58,13 @@
             <p><strong>Sets:</strong> {{ ex.sets }}</p>
             <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
             <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
-            <button class="btn btn-sm btn-danger" @click="deleteExercise(index)">Delete</button>
+            <p><strong>Total Weight:</strong> {{ ex.totalWeight.toFixed(2) }}</p>
           </li>
         </ul>
       </div>
     </div>
     <div v-else>
-      <h4 class="profile-welcome">Please log in to add your workoutplan.</h4>
+      <h4 class="profile-welcome">Please log in to add your workout plan.</h4>
     </div>
   </div>
 </template>
@@ -92,7 +85,6 @@ const newExercise = ref<Exercise>({
   owner: ''
 });
 const email = ref<string>('');
-const showExerciseList = ref(true);
 const userName = ref('');
 const isAuthenticated = ref(false);
 
@@ -198,23 +190,31 @@ const updateRepetitions = (value: number) => {
   }
 };
 
-const deleteExercise = async (index: number) => {
+const deleteExercise = async (id: number, index: number) => {
   if (exercise.value.length > index) {
     try {
-      const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + '/workoutplan');
+      const token = await $auth.getAccessToken(); // Annahme: Funktion zum Abrufen des JWT-Tokens
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/workoutplan/delete/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       console.log('Deleted exercise:', response);
+
+      // Entfernen Sie das gelöschte Element aus der lokalen Liste
       exercise.value.splice(index, 1);
     } catch (error) {
       console.error('Failed to delete exercise:', error);
+      console.error('Error details:', error.response || error.message || error);
     }
   }
 };
 
-const toggleExerciseList = () => {
-  showExerciseList.value = !showExerciseList.value;
+const clearExerciseList = () => {
+  exercise.value = [];
 };
-
 </script>
+
 
 <style scoped>
 .container {

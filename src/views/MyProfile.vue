@@ -130,9 +130,14 @@ watch([height, weight, gender], () => {
   text-align: left;
 }
 
+.myprofile{
+margin-top: 40px;
+margin-left: -15px;
+}
+
 .greeting {
-  margin-top: 80px;
-  text-align: left;
+  margin-top: 40px;
+  margin-left: -15px;
 }
 
 .input-row {
