@@ -23,7 +23,7 @@
         <td>{{ item.name }}</td>
         <td>{{ item.sets }}</td>
         <td>{{ item.repetitions }}</td>
-        <td>{{ item.weight }}</td>
+        <td>{{ item.weight.map(w => w.toLocaleString('de-DE', { minimumFractionDigits: 2 })).join(', ') }} kg</td>
         <td>
           {{ item.totalWeight > 0 ? item.totalWeight.toLocaleString('de-DE', { minimumFractionDigits: 2 }) : '-' }}
         </td>

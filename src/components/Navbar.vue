@@ -79,13 +79,15 @@ export default defineComponent({
 
 .navbar-logo {
   height: 15px;
-  margin-left: -20px;
-
+  margin-left: 0px; /* Linker Abstand des Logos */
+  position: absolute; /* Fixiere das Logo innerhalb des Containers */
+  left: 20px; /* Linker Abstand des Logos relativ zum Container */
 }
 
 .navbar-icon {
   height: 40px;
   margin-left: 20px;
+
 }
 
 .navbar {
@@ -96,7 +98,11 @@ export default defineComponent({
   margin: 0;
   padding: 0;
   width: 100%;
+  background-color: #f9f9f9 !important;
   z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+
 }
 
 .navbar-brand {
@@ -104,10 +110,7 @@ export default defineComponent({
   margin-right: auto;
 }
 
-.navbar-toggler {
-  order: -1;
-  margin-right: 0px;
-}
+
 
 .navbar-nav {
   display: flex;

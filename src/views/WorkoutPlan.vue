@@ -40,7 +40,6 @@
           </div>
 
 
-          <!-- Router link to history -->
           <router-link to="/history" class="btn btn-primary">Go to overview</router-link>
           <button class="btn btn-primary" v-if="exercise.length > 0" @click="clearExerciseList">
             Clear exercise list
@@ -56,7 +55,7 @@
             <p><strong>Sets:</strong> {{ ex.sets }}</p>
             <p><strong>Repetitions:</strong> {{ ex.repetitions.join(', ') }}</p>
             <p><strong>Weight:</strong> {{ ex.weight.join(', ') }}</p>
-            <p><strong>Total Weight:</strong> {{ ex.totalWeight.toFixed(2)}}<light> kg</light> </p>
+            <p><strong>Total Weight:</strong> {{ ex.totalWeight > 0 ? ex.totalWeight.toLocaleString('de-DE', { minimumFractionDigits: 2 }) : '-' }}<light> kg</light> </p>
           </li>
         </ul>
       </div>
@@ -251,6 +250,7 @@ const clearExerciseList = () => {
 
 .profile-welcome {
   margin-top: 30px;
+  margin-left: -5px;
 }
 
 input,

@@ -52,4 +52,10 @@ const logout = async () => {
   margin-top: 40px;
   margin-left: -15px;
 }
+
+.btn-primary {
+  margin-top: 30px;
+  margin-left: 0px;
+}
+
 </style>
