@@ -41,32 +41,26 @@ export default defineComponent({
       </router-link>
 
 
-      <router-link to="/myprofile" class="navbar-brand" >
+      <router-link to="/profile" class="navbar-brand" >
         <img class="navbar-icon" src="@/assets/icon-myProfile.png" alt="myProfile Icon" />
       </router-link>
 
-      <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <router-link to="/bmicalculator" class="navbar-brand" >
+        <img class="navbar-icon" src="@/assets/icon-bmicalculator.png" alt="myProfile Icon" />
+      </router-link>
+
+
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <router-link class="nav-link" to="/">Home</router-link>
           <router-link class="nav-link" to="/about">About</router-link>
-          <router-link class="nav-link" to="/myprofile">myProfile</router-link>
+          <router-link class="nav-link" to="/bmicalculator">BMI Calculator</router-link>
 
 
 
           <router-link v-if="!isAuthenticated" to="/login" class="nav-link">Login</router-link>
-          <router-link v-if="isAuthenticated" to="/profile" class="nav-link">Profile</router-link>
+          <router-link v-if="isAuthenticated" to="/profile" class="nav-link">myProfile</router-link>
           <a v-if="isAuthenticated" class="nav-link" @click="logout()">Logout</a>
         </div>
       </div>
@@ -84,6 +78,8 @@ export default defineComponent({
 
 .navbar-logo {
   height: 15px;
+  margin-left: -20px;
+
 }
 
 .navbar-icon {

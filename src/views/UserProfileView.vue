@@ -1,8 +1,7 @@
 <template>
   <div id="profile">
-    <h4 class="profile-welcome">Welcome, {{ userName }}</h4>
+    <h4 class="profile-welcome">myProfile</h4>
     <p>
-      Below is the information from your ID token.
     </p>
     <table>
       <thead>
@@ -49,5 +48,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Hier können bei Bedarf Styles ergänzt werden */
+.profile-welcome {
+  margin-top: 40px;
+  margin-left: -15px;
+}
+
+
 </style>

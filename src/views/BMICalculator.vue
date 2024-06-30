@@ -1,6 +1,8 @@
 <template>
   <div v-if="isAuthenticated" class="container">
-    <h4 class="greeting">Welcome to your profile, Vladimir!</h4>
+    <h4 class="greeting">Calculate your BMI </h4>
+    <h8 class="greeting">What is your target, {{ userName }}?</h8>
+
 
     <div class="myprofile">
       <div class="input-row">
@@ -28,8 +30,10 @@
       </div>
     </div>
   </div>
-  <div v-else class="container">
-    <h4 class="greeting">Please log in to view your profile.</h4>
+
+  <div v-else>
+    <h4 class="greeting">Please log in to access the service.</h4>
+    <button class="btn btn-primary" @click="loginRedirect">Login</button>
   </div>
 </template>
 
@@ -37,6 +41,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useAuth } from '@okta/okta-vue';
+import {useRouter} from "vue-router";
 
 const height = ref<number>(0);
 const weight = ref<number>(0);
@@ -45,11 +50,18 @@ const bmi = ref<number>(0);
 const bmiCategory = ref<string>('');
 const isAuthenticated = ref(false);
 const $auth = useAuth();
+let userName = ref('');
+const router = useRouter();
+
+
+const loginRedirect = () => {
+  router.push('/login');
+};
 
 const fetchPersonData = async () => {
   try {
     const token = await $auth.getAccessToken();
-    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/myprofile', {
+    const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/bmicalculator', {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -71,6 +83,18 @@ const fetchPersonData = async () => {
   }
 };
 
+const fetchUserName = async () => {
+  try {
+    const userClaims = await $auth.getUser();
+    if (userClaims.given_name) {
+      userName.value = userClaims.given_name;
+    } else {
+      userName.value = "User"; // Fallback, falls kein Vorname vorhanden ist
+    }
+  } catch (error) {
+    console.error('Failed to fetch user name:', error);
+  }
+};
 
 const calculateBMI = () => {
   if (height.value > 0 && weight.value > 0) {
@@ -116,6 +140,7 @@ onMounted(async () => {
   isAuthenticated.value = await $auth.isAuthenticated();
   if (isAuthenticated.value) {
     fetchPersonData();
+    fetchUserName();
   }
 });
 
@@ -147,5 +172,10 @@ margin-left: -15px;
 .input-row label {
   display: inline-block;
   width: 120px;
+}
+
+.btn-primary {
+  margin-top: 0px;
+  margin-left: -15px;
 }
 </style>

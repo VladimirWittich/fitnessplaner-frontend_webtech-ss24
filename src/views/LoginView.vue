@@ -23,7 +23,7 @@ onUnmounted(() => {
 
 <style scoped>
 .login{
-  margin-top: 200px;
-  margin-left: 0px;
+  margin-top: 40px;
+  margin-left: -15px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h4 class="profile-welcome">History {{ userName }}!</h4>
+    <h4 class="profile-welcome">Your overview, {{ userName }}!</h4>
     <input type="text" v-model="searchQuery" placeholder="Search by name">
 
     <div v-if="isLoading">

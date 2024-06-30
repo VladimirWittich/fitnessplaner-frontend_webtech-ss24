@@ -26,15 +26,22 @@ onMounted(async () => {
 const loginRedirect = () => {
   router.push('/login');
 };
+
+const logout = async () => {
+  await $auth.signOut();
+  isAuthenticated.value = false;
+  router.push('/');
+};
 </script>
 
 <template>
   <div class="greeting">
     <div v-if="isAuthenticated">
       <h4 class="profile-welcome">Hi, {{ userName }}!</h4>
+      <button class="btn btn-primary" @click="logout">Logout</button>
     </div>
     <div v-else>
-      <h4 class="profile-welcome">Please log in to add your workout plan.</h4>
+      <h4 class="profile-welcome">Please log in to access the service.</h4>
       <button class="btn btn-primary" @click="loginRedirect">Login</button>
     </div>
   </div>

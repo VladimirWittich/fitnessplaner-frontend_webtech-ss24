@@ -14,7 +14,6 @@
           <label>Sets:</label>
           <input type="number" v-model="newExercise.sets" @input="updateRepetitions(newExercise.sets)" placeholder="0">
 
-          <!-- Show only if Sets > 0 -->
           <template v-if="newExercise.sets > 0">
             <div class="row">
               <template v-for="(repetition, index) in newExercise.repetitions" :key="index">
@@ -36,22 +35,21 @@
 
           <!-- Buttons: Add to my History and Cancel -->
           <div class="mt-3">
-            <button class="btn btn-primary" @click="addToHistory">Add to my History</button>
+            <button class="btn btn-primary" @click="addToHistory">Add exercise</button>
             <button class="btn btn-danger" @click="cancel">Cancel</button>
           </div>
 
 
           <!-- Router link to history -->
-          <router-link to="/history" class="btn btn-primary">Go to history</router-link>
+          <router-link to="/history" class="btn btn-primary">Go to overview</router-link>
           <button class="btn btn-primary" v-if="exercise.length > 0" @click="clearExerciseList">
-            Clear Exercise List
+            Clear exercise list
           </button>
         </div>
       </div>
 
-      <!-- Exercise list -->
       <div v-if="exercise.length > 0" class="mt-3">
-        <h5>Exercise List:</h5>
+        <h5 class="exerciselist">Exercise list:</h5>
         <ul>
           <li v-for="(ex, index) in exercise" :key="index">
             <p><strong>Name:</strong> {{ ex.name }}</p>
@@ -64,7 +62,8 @@
       </div>
     </div>
     <div v-else>
-      <h4 class="profile-welcome">Please log in to add your workout plan.</h4>
+      <h4 class="greeting">Please log in to access the service.</h4>
+      <button class="btn btn-primary" @click="loginRedirect">Login</button>
     </div>
   </div>
 </template>
@@ -74,6 +73,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuth } from '@okta/okta-vue';
 import type { Exercise } from "@/model/model";
+import {useRouter} from "vue-router";
 
 const exercise = ref<Exercise[]>([]);
 const newExercise = ref<Exercise>({
@@ -87,8 +87,14 @@ const newExercise = ref<Exercise>({
 const email = ref<string>('');
 const userName = ref('');
 const isAuthenticated = ref(false);
+const router = useRouter();
+
 
 const $auth = useAuth();
+
+const loginRedirect = () => {
+  router.push('/login');
+};
 
 const fetchInitialExerciseData = async () => {
   try {
@@ -263,4 +269,20 @@ button {
 .exercise-value input {
   margin-left: 0px;
 }
+
+.greeting {
+    margin-top: 40px;
+    margin-left: -5px;
+  }
+
+.btn-primary {
+    margin-top: 0px;
+    margin-left: -5px;
+}
+
+.exerciselist {
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
 </style>

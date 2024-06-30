@@ -1,12 +1,12 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router';
 import AboutView from '@/views/AboutView.vue';
 import HomeView from '@/views/HomeView.vue';
-import MyProfile from '@/views/MyProfile.vue';
 import WorkoutPlan from "@/views/WorkoutPlan.vue";
-import HistoryView from "@/views/HistoryView.vue";
+import HistoryView from "@/views/OverviewView.vue";
 import { LoginCallback, navigationGuard } from "@okta/okta-vue";
 import LoginView from "@/views/LoginView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
+import BMICalculator from "@/views/BMICalculator.vue";
 
 // Router-Definition
 const router = createRouter({
@@ -23,9 +23,9 @@ const router = createRouter({
       component: AboutView
     },
     {
-      path: '/myprofile',
-      name: 'MyProfile',
-      component: MyProfile
+      path: '/bmicalculator',
+      name: 'BMI Calculator',
+      component: BMICalculator
     },
     {
       path: '/workoutplan',
