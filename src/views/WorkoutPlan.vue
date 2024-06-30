@@ -33,7 +33,6 @@
             </div>
           </template>
 
-          <!-- Buttons: Add to my History and Cancel -->
           <div class="mt-3">
             <button class="btn btn-primary" @click="addToHistory">Add exercise</button>
             <button class="btn btn-danger" @click="cancel">Cancel</button>
@@ -119,13 +118,12 @@ onMounted(async () => {
       const userClaims = await $auth.getUser();
       if (userClaims.email) {
         email.value = userClaims.email;
-        newExercise.value.owner = userClaims.email; // Set email in newExercise
+        newExercise.value.owner = userClaims.email;
       }
       if (userClaims.given_name) {
         userName.value = userClaims.given_name;
       }
 
-      // Fetch initial exercise data if authenticated
       fetchInitialExerciseData();
     }
   } catch (error) {
@@ -134,7 +132,6 @@ onMounted(async () => {
 });
 
 const showInputs = () => {
-  // Toggle display of repetitions and weight inputs
   newExercise.value.repetitions = Array.from({ length: newExercise.value.sets }, () => 0);
   newExercise.value.weight = Array.from({ length: newExercise.value.sets }, () => 0);
 };
@@ -168,7 +165,7 @@ const resetForm = () => {
     repetitions: [],
     weight: [],
     totalWeight: 0,
-    owner: email.value // Set to current email value
+    owner: email.value
   };
 };
 
@@ -190,15 +187,15 @@ const calculateTotalWeight = (exercise: Exercise) => {
 
 const updateRepetitions = (value: number) => {
   if (value >= 0) {
-    newExercise.value.repetitions = Array.from({ length: value }, () => 0); // Initialize with 0
-    newExercise.value.weight = Array.from({ length: value }, () => 0); // Initialize with 0
+    newExercise.value.repetitions = Array.from({ length: value }, () => 0);
+    newExercise.value.weight = Array.from({ length: value }, () => 0);
   }
 };
 
 const deleteExercise = async (id: number, index: number) => {
   if (exercise.value.length > index) {
     try {
-      const token = await $auth.getAccessToken(); // Annahme: Funktion zum Abrufen des JWT-Tokens
+      const token = await $auth.getAccessToken();
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/workoutplan/delete/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -206,7 +203,6 @@ const deleteExercise = async (id: number, index: number) => {
       });
       console.log('Deleted exercise:', response);
 
-      // Entfernen Sie das gelöschte Element aus der lokalen Liste
       exercise.value.splice(index, 1);
     } catch (error) {
       console.error('Failed to delete exercise:', error);
@@ -227,9 +223,6 @@ const clearExerciseList = () => {
   margin-left: -20px;
 }
 
-.bg-light-gray {
-  background-color: #f8f9fa;
-}
 
 .new-exercise-form input[type="text"],
 .new-exercise-form input[type="number"],
@@ -272,17 +265,22 @@ button {
 
 .greeting {
     margin-top: 40px;
-    margin-left: -5px;
+    margin-left: -3px;
   }
 
 .btn-primary {
     margin-top: 0px;
-    margin-left: -5px;
+    margin-left: -10px;
 }
 
 .exerciselist {
   margin-top: 0px;
   margin-left: 0px;
+}
+
+.btn-primary {
+  margin-top: 30px;
+  margin-left: -5px;
 }
 
 </style>

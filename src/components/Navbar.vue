@@ -18,7 +18,7 @@ export default defineComponent({
       isAuthenticated.value = await auth.isAuthenticated()
     }
 
-    checkAuthentication() // Initial check
+    checkAuthentication()
 
     auth.authStateManager.subscribe(checkAuthentication)
 
@@ -48,18 +48,10 @@ export default defineComponent({
         <img class="navbar-icon" src="@/assets/icon-myProfile.png" alt="myProfile Icon" />
       </router-link>
 
-
-
-
-
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <router-link class="nav-link" to="/">Home</router-link>
-          <router-link class="nav-link" to="/about">About</router-link>
           <router-link class="nav-link" to="/bmicalculator">BMI Calculator</router-link>
-
-
-
           <router-link v-if="!isAuthenticated" to="/login" class="nav-link">Login</router-link>
           <router-link v-if="isAuthenticated" to="/profile" class="nav-link">myProfile</router-link>
           <a v-if="isAuthenticated" class="nav-link" @click="logout()">Logout</a>
@@ -79,9 +71,9 @@ export default defineComponent({
 
 .navbar-logo {
   height: 15px;
-  margin-left: 0px; /* Linker Abstand des Logos */
-  position: absolute; /* Fixiere das Logo innerhalb des Containers */
-  left: 20px; /* Linker Abstand des Logos relativ zum Container */
+  margin-left: 0px;
+  position: absolute;
+  left: 20px;
 }
 
 .navbar-icon {

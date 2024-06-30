@@ -1,5 +1,4 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router';
-import AboutView from '@/views/AboutView.vue';
 import HomeView from '@/views/HomeView.vue';
 import WorkoutPlan from "@/views/WorkoutPlan.vue";
 import HistoryView from "@/views/OverviewView.vue";
@@ -16,11 +15,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: AboutView
     },
     {
       path: '/bmicalculator',
@@ -58,7 +52,6 @@ const router = createRouter({
 });
 
 
-// Vor dem Routing-Guard
 router.beforeEach(navigationGuard);
 
 export default router;

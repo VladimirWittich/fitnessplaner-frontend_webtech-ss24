@@ -68,8 +68,8 @@ const fetchPersonData = async () => {
       }
     });
 
-    if (response.data && response.data.length > 0) { // sicherstellen, dass Daten vorhanden sind
-      const personData = response.data[0]; // Da das Backend ein Array von Objekten zurückgibt, auf das erste Objekt zugreifen
+    if (response.data && response.data.length > 0) {
+      const personData = response.data[0];
       console.log('Received person data:', personData);
       if (personData.height) height.value = personData.height;
       if (personData.weight) weight.value = personData.weight;
@@ -89,7 +89,7 @@ const fetchUserName = async () => {
     if (userClaims.given_name) {
       userName.value = userClaims.given_name;
     } else {
-      userName.value = "User"; // Fallback, falls kein Vorname vorhanden ist
+      userName.value = "User";
     }
   } catch (error) {
     console.error('Failed to fetch user name:', error);
@@ -152,7 +152,7 @@ watch([height, weight, gender], () => {
 <style scoped>
 .container {
   margin-top: 20px;
-  text-align: left;
+  margin-left: -5px;
 }
 
 .myprofile{
@@ -162,7 +162,7 @@ margin-left: -15px;
 
 .greeting {
   margin-top: 40px;
-  margin-left: -20px;
+  margin-left: -15px;
 }
 
 .input-row {
@@ -175,7 +175,7 @@ margin-left: -15px;
 }
 
 .btn-primary {
-  margin-top: 0px;
+  margin-top: 30px;
   margin-left: -15px;
 }
 </style>

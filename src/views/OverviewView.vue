@@ -56,11 +56,11 @@ const historyItems = ref<ExerciseItem[]>([]);
 const searchQuery = ref<string>('');
 const router = useRouter();
 const isAuthenticated = ref(false);
-const isLoading = ref(true); // Start with loading state true
+const isLoading = ref(true);
 const $auth = useAuth();
 let userName = ref('');
 let timer: number | null = null;
-const TIMEOUT_DURATION = 10000; // 10 seconds
+const TIMEOUT_DURATION = 10000;
 
 const fetchHistoryData = async () => {
   try {
@@ -70,12 +70,12 @@ const fetchHistoryData = async () => {
         'Authorization': `Bearer ${token}`
       }
     });
-    historyItems.value = response.data; // assuming response.data is an array of ExerciseItem
-    isLoading.value = false; // Set loading state to false after fetching data
-    clearTimeout(timer); // Clear timeout when data is loaded
+    historyItems.value = response.data;
+    isLoading.value = false;
+    clearTimeout(timer);
   } catch (error) {
     console.error('Failed to fetch history data:', error);
-    isLoading.value = false; // Set loading state to false on error
+    isLoading.value = false;
   }
 };
 
@@ -88,8 +88,8 @@ const filteredItems = computed(() => {
 
 const startTimeoutTimer = () => {
   timer = window.setTimeout(() => {
-    isLoading.value = false; // Set loading state to false after timeout
-    clearTimeout(timer); // Clear timeout
+    isLoading.value = false;
+    clearTimeout(timer);
     timer = null;
   }, TIMEOUT_DURATION);
 };
@@ -102,17 +102,16 @@ onMounted(async () => {
       if (userClaims.given_name) {
         userName.value = userClaims.given_name;
       }
-      fetchHistoryData(); // Fetch history data if authenticated
-      startTimeoutTimer(); // Start timeout timer
+      fetchHistoryData();
+      startTimeoutTimer();
 
-      // Additional logic to fetch workout plan data
       const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/workoutplan/all');
       historyItems.value = response.data;
-      clearTimeout(timer); // Clear timeout if data fetch finishes before timeout
+      clearTimeout(timer);
     }
   } catch (error) {
     console.error('Failed to fetch user claims or history data:', error);
-    isLoading.value = false; // Set loading state to false on error
+    isLoading.value = false;
   }
 });
 
@@ -140,7 +139,7 @@ const showNoResultsMessage = computed(() => {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  white-space: nowrap; /* Verhindert Textumbruch */
+  white-space: nowrap;
 }
 
 .table th {
